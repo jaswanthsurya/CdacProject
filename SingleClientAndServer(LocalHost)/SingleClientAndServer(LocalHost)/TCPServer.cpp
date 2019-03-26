@@ -81,13 +81,16 @@ int main()
 		cout << "accept successfull" << endl;
 
 	//sending data
-	iSend = send(TCPServerSocket, SenderBuffer, iSenderBuffer, 0);
+	iSend = send(sAcceptSocket, SenderBuffer, iSenderBuffer, 0);
 	if (iSend == SOCKET_ERROR)
 	{
 		cerr << "sending failed due to error: " << WSAGetLastError() << endl;
 	}
 	else
+	{
 		cout << "sending data sucessful" << endl;
+		cout << "sent :" << SenderBuffer << endl;
+	}
 
 	//receive data
 	iRecv = recv(sAcceptSocket, RecvBuffer, iRecvBuffer, 0);
@@ -96,7 +99,10 @@ int main()
 		cerr << "receiving failed due to error" << WSAGetLastError() << endl;
 	}
 	else
+	{
 		cout << "receiving data succedded" << endl;
+		cout << "received :" << RecvBuffer << endl;
+	}
 	//closing socket
 	iCloseSocket = closesocket(TCPServerSocket);
 	if (iCloseSocket == SOCKET_ERROR)

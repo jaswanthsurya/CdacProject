@@ -68,7 +68,10 @@ int main()
 		cerr << "receiving failed due to error" << WSAGetLastError() << endl;
 	}
 	else
+	{
 		cout << "receiving data succedded" << endl;
+		cout << "received :" << RecvBuffer << endl;
+	}
 
 	//sending data
 	iSend = send(TCPClientSocket, SenderBuffer, iSenderBuffer, 0);
@@ -77,7 +80,10 @@ int main()
 		cerr << "sending failed due to error: " << WSAGetLastError() << endl;
 	}
 	else
+	{
 		cout << "sending data sucessful" << endl;
+		cout << "sent :" << SenderBuffer << endl;
+	}
 	
 	//closing socket
 	iCloseSocket = closesocket(TCPClientSocket);
