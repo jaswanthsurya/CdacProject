@@ -1,5 +1,6 @@
 #include<iostream>
 #include<WinSock2.h>
+#include<windows.h>
 
 #pragma warning(disable:4996) 
 using namespace std;
@@ -31,6 +32,7 @@ int main()
 	int iRecv;
 	char RecvBuffer[512];
 	int iRecvBuffer = strlen(RecvBuffer) + 1;//receiving buffer parameters
+	ZeroMemory(RecvBuffer,512);
 
 	//initialise wsastartup
 	iWsaStartup = WSAStartup(MAKEWORD(2, 2), &Winsockdata);
@@ -43,7 +45,7 @@ int main()
 
 	//filling the server details
 	TCPServerAdd.sin_family = AF_INET;
-	TCPServerAdd.sin_addr.s_addr = inet_addr("127.0.0.1");
+	TCPServerAdd.sin_addr.s_addr = htonl(INADDR_ANY);
 	TCPServerAdd.sin_port = htons(8000);
 
 	//socket creation
