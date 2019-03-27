@@ -22,7 +22,7 @@ int main()
 
 
 	int iSend;
-	char SenderBuffer[512] = "hello from client!";
+	char SenderBuffer[512] = "hello from publisher!";
 	int iSenderBuffer = strlen(SenderBuffer);//sending buffer parameters
 
 	int iRecv;
@@ -85,7 +85,7 @@ int main()
 		cout << "sending data sucessful" << endl;
 		cout << "sent :" << SenderBuffer << endl;
 	}
-	
+
 	//closing socket
 	iCloseSocket = closesocket(TCPClientSocket);
 	if (iCloseSocket == SOCKET_ERROR)

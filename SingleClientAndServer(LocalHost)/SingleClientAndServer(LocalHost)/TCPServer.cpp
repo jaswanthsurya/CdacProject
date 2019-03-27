@@ -32,7 +32,7 @@ int main()
 	int iRecv;
 	char RecvBuffer[512];
 	int iRecvBuffer = strlen(RecvBuffer) + 1;//receiving buffer parameters
-	ZeroMemory(RecvBuffer,512);
+	ZeroMemory(RecvBuffer, 512);
 
 	//initialise wsastartup
 	iWsaStartup = WSAStartup(MAKEWORD(2, 2), &Winsockdata);
