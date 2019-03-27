@@ -6,7 +6,7 @@ using namespace std;
 
 int main()
 {
-	cout << ".....................TCP CLIENT........................." << endl;
+	cout << ".....................TCP SUBSCRIBER........................." << endl;
 	WSADATA Winsockdata;//structure variable used to initialise winsock library
 	int iWsaStartup;
 	int iWsaCleanup;//variables to hold return types of startup and cleanup functions
