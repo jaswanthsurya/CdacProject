@@ -3,7 +3,6 @@
 #include <sqlext.h>
 #include <sqltypes.h>
 #include <sql.h>
-#include<vector>
 using namespace std;
 
 void showSQLError(unsigned int handleType, const SQLHANDLE& handle)
@@ -21,7 +20,7 @@ int main()
 	SQLHANDLE SQLConnectionHandle = NULL;
 	SQLHANDLE SQLStatementHandle = NULL;
 	SQLRETURN retCode = 0;
-	char SQLQuery[] = "SELECT * FROM emp";
+	char SQLQuery[] = "SELECT * FROM SubscriberDetails";
 
 	do {
 		if (SQL_SUCCESS != SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &SQLEnvHandle))
@@ -42,7 +41,7 @@ int main()
 
 		SQLCHAR retConString[1024]; // Conection string
 		switch (SQLDriverConnect(SQLConnectionHandle, NULL,
-			(SQLCHAR*)"DRIVER={SQL Server}; SERVER=DESKTOP-7IBUVRI\\SQLEXPRESS; DATABASE=ncr;Trusted=true;",
+			(SQLCHAR*)"DRIVER={SQL Server}; SERVER=DESKTOP-7IBUVRI\\SQLEXPRESS; DATABASE=PublisherSubscriberDB;Trusted=true;",
 			SQL_NTS, retConString, 1024, NULL, SQL_DRIVER_NOPROMPT)) {
 			// Establishes connections to a driver and a data source
 		case SQL_SUCCESS:
@@ -80,19 +79,10 @@ int main()
 		else {
 			int num;
 			char name[256];
-			vector<int> vec;
 			while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
-				// Fetches the next rowset of data from the result
-				//SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &name, sizeof(name), NULL);
-				SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &num, sizeof(num), NULL);
+				SQLGetData(SQLStatementHandle, 3, SQL_C_DEFAULT, &num, sizeof(num), NULL);
 				// Retrieves data for a single column in the result set
-				cout << num << endl;
-				vec.push_back(num);
-			}
-			vector<int>::iterator it;
-			for (it = vec.begin(); it != vec.end(); it++)
-			{
-				cout << *it << endl;
+				
 			}
 		}
 	} while (FALSE);
