@@ -25,8 +25,7 @@ void showSQLError(unsigned int handleType, const SQLHANDLE& handle)
 	SQLCHAR message[1024];
 	if (SQL_SUCCESS == SQLGetDiagRec(handleType, handle, 1, SQLState, NULL, message, 1024, NULL))
 		// Returns the current values of multiple fields of a diagnostic record that contains error, warning, and status information
-		cout << "SQL driver message: " << message << "\nSQL state: " << SQLState << "." << endl;
-
+		cout << "|.................SQL driver message......................|" << message << "\nSQL state: " << SQLState << "." << endl;
 }
 
 void CheckSQL(char * SQLQuery)//function to connect to db and run query accordingly
@@ -132,33 +131,32 @@ void GetPublished(char* RecvBuffer, int iRecvBuffer)
 	TCPServerSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (TCPServerSocket == INVALID_SOCKET)
 	{
-		cerr << "socket creation failed due to error :" << WSAGetLastError() << endl;
+		cerr << "|...........socket creation failed due to error...........|" << WSAGetLastError() << endl;
 	}
 	else
-		cout << "socket creation successfull" << endl;
+		cout << "|..............socket creation successfull................|" << endl;
 
 	//binding socket
 	iBind = bind(TCPServerSocket, (SOCKADDR*)&TCPServerAdd, sizeof(TCPServerAdd));
 	if (iBind == SOCKET_ERROR)
 	{
-		cerr << "binding filed due to error :" << WSAGetLastError() << endl;
+		cerr << "|..............binding failed due to error.................|" << WSAGetLastError() << endl;
 	}
 	else
-		cout << "binding successfull" << endl;
+		cout << "|.................binding successfull.....................|" << endl;
 
 	//listen function
 	iListen = listen(TCPServerSocket, SOMAXCONN);
 	if (iListen == SOCKET_ERROR)
 	{
-		cerr << "listen function failed due to error: " << WSAGetLastError() << endl;
+		cerr << "|...........listen function failed due to error...........|" << WSAGetLastError() << endl;
 	}
 	else
-		cout << "listen function successfull" << endl;
+		cout << "|..............listen function successfull................|" << endl;
 
 	//function to get the ip address of publisher
 	char SQLQuery[] = "SELECT  PublisherIP FROM PublisherDetails";
-	cout << endl << endl;
-	cout << "getting ip addresses of publishers " << endl;
+	cout << "|............getting ip addresses of publishers...........|" << endl;
 	CheckSQL(SQLQuery);
 	vect.push_back(0);
 	while (1)
@@ -166,12 +164,12 @@ void GetPublished(char* RecvBuffer, int iRecvBuffer)
 		//accept
 		sAcceptSocket = accept(TCPServerSocket, (SOCKADDR*)&TCPClientAdd, &iTCPClientAdd);
 		if (sAcceptSocket == INVALID_SOCKET)
-			cerr << "accept failed due to error: " << WSAGetLastError() << endl;
+			cerr << "|..............accept failed due to error.................|" << WSAGetLastError() << endl;
 		CurrentIpAddressOfClient = TCPClientAdd.sin_addr.s_addr;
 		if (find(vect.begin(), vect.end(), CurrentIpAddressOfClient) != vect.end())
 		{
-			cout << "accept successfull" << endl << endl;
-			cout << "the ip address connected is  :" << CurrentIpAddressOfClient << endl;
+			cout << "|..................accept successfull.....................|" << endl << endl;
+			cout << "|............The ip address connected is " << CurrentIpAddressOfClient << ".......|" << endl;
 			break;
 		}
 	}	
@@ -179,22 +177,22 @@ void GetPublished(char* RecvBuffer, int iRecvBuffer)
 	iRecv = recv(sAcceptSocket, RecvBuffer, iRecvBuffer, 0);
 	if (iRecv == SOCKET_ERROR)
 	{
-		cerr << "receiving failed due to error" << WSAGetLastError() << endl;
+		cerr << "|.............receiving failed due to error...............|" << WSAGetLastError() << endl;
 	}
 	else
 	{
-		cout << "receiving data succedded" << endl;
-		cout << "received :" << RecvBuffer << endl;
+		cout << "|...............receiving data succedded..................|" << endl;
+		cout << "|......................received..........................::" << RecvBuffer << endl;
 	}
 
 	//closing socket
 	iCloseSocket = closesocket(TCPServerSocket);
 	if (iCloseSocket == SOCKET_ERROR)
 	{
-		cerr << "closing socket failed due to error" << WSAGetLastError() << endl;
+		cerr << "|...........closing socket failed due to error............|" << WSAGetLastError() << endl;
 	}
 	else
-		cout << "socket closed" << endl;
+		cout << "|....................socket closed........................|" << endl;
 }
 
 void SendSubscribed(char* SenderBuffer, int iSenderBuffer)
@@ -220,28 +218,28 @@ void SendSubscribed(char* SenderBuffer, int iSenderBuffer)
 	TCPServerSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (TCPServerSocket == INVALID_SOCKET)
 	{
-		cerr << "socket creation failed due to error :" << WSAGetLastError() << endl;
+		cerr << "|..........socket creation failed due to error............|" << WSAGetLastError() << endl;
 	}
 	else
-		cout << "socket creation successfull" << endl;
+		cout << "|.............socket creation successfull.................|" << endl;
 
 	//binding socket
 	iBind = bind(TCPServerSocket, (SOCKADDR*)&TCPServerAdd, sizeof(TCPServerAdd));
 	if (iBind == SOCKET_ERROR)
 	{
-		cerr << "binding filed due to error :" << WSAGetLastError() << endl;
+		cerr << "|..............binding filed due to error.................|" << WSAGetLastError() << endl;
 	}
 	else
-		cout << "binding successfull" << endl;
+		cout << "|................binding successfull......................|" << endl;
 
 	//listen function
 	iListen = listen(TCPServerSocket, SOMAXCONN);
 	if (iListen == SOCKET_ERROR)
 	{
-		cerr << "listen function failed due to error: " << WSAGetLastError() << endl;
+		cerr << "|.........listen function failed due to error.............|" << WSAGetLastError() << endl;
 	}
 	else
-		cout << "listen function successfull" << endl;
+		cout << "|.............listen function successfull.................|" << endl;
 	
 	//code to convert the ip address of the client into a query string
 	char SQLQuery1[512] = "select SubscriberIP from SubscriberDetails where topic=(select topic from PublisherDetails where PublisherIP=";
@@ -253,7 +251,6 @@ void SendSubscribed(char* SenderBuffer, int iSenderBuffer)
 	char c[] = ")";
 	strcat(SQLQuery1, c);
 
-	cout << "getting the client ip addresses subscribed to topic posted by ip:" << CurrentIpAddressOfClient << " from SQL Server " << endl;
 	CheckSQL(SQLQuery1);
 	vect.push_back(0);
 	while (1)
@@ -261,12 +258,12 @@ void SendSubscribed(char* SenderBuffer, int iSenderBuffer)
 		//accept
 		sAcceptSocket = accept(TCPServerSocket, (SOCKADDR*)&TCPClientAdd, &iTCPClientAdd);
 		if (sAcceptSocket == INVALID_SOCKET)
-			cerr << "accept failed due to error: " << WSAGetLastError() << endl;
+			cerr << "|.............accept failed due to error..................|" << WSAGetLastError() << endl;
 		CurrentIpAddressOfClientSubscriber = TCPClientAdd.sin_addr.s_addr;
 		if (find(vect.begin(), vect.end(), CurrentIpAddressOfClientSubscriber) != vect.end())
 		{
-			cout << "accept successfull" << endl << endl;
-			cout << "the subscriber ip address connected to is: " << CurrentIpAddressOfClientSubscriber << endl;
+			cout << "|.................accept successfull......................|" << endl << endl;
+			cout << "|............The ip address connected is " << CurrentIpAddressOfClientSubscriber << ".......|" << endl;
 			break;
 		}
 	}
@@ -276,22 +273,22 @@ void SendSubscribed(char* SenderBuffer, int iSenderBuffer)
 	iSend = send(sAcceptSocket, SenderBuffer, iSenderBuffer, 0);
 	if (iSend == SOCKET_ERROR)
 	{
-		cerr << "sending failed due to error: " << WSAGetLastError() << endl;
+		cerr << "|.............sending failed due to error.................|" << WSAGetLastError() << endl;
 	}
 	else
 	{
-		cout << "sending data sucessful" << endl;
-		cout << "sent :" << SenderBuffer << endl;
+		cout << "|...............sending data sucessfull...................|" << endl;
+		cout << "|.......................sent.............................::" << SenderBuffer << endl;
 	}
 
 	//closing socket
 	iCloseSocket = closesocket(TCPServerSocket);
 	if (iCloseSocket == SOCKET_ERROR)
 	{
-		cerr << "closing socket failed due to error" << WSAGetLastError() << endl;
+		cerr << "|...........closing socket failed due to error............|" << WSAGetLastError() << endl;
 	}
 	else
-		cout << "socket closed" << endl;
+		cout << "|....................socket closed........................|" << endl;
 
 }
 
@@ -308,15 +305,15 @@ int main()
 	int iWsaStartup;
 	int iWsaCleanup;//variables to hold return types of startup and cleanup functions
 
-	cout << ".....................TCP MANAGER........................." << endl;
+	cout << "|.....................TCP MANAGER.........................|" << endl;
 	//initialise wsastartup
 	iWsaStartup = WSAStartup(MAKEWORD(2, 2), &Winsockdata);
 	if (iWsaStartup != 0)
 	{
-		cerr << "Wsa Startup failed" << endl;
+		cerr << "|..................Wsa Startup failed.....................|" << endl;
 	}
 	else
-		cout << "Wsa Startup successfull" << endl;
+		cout << "|................Wsa Startup successfull..................|" << endl;
 	//*******************************************************************************************************
 	GetPublished(RecvBuffer, iRecvBuffer);
 
@@ -331,10 +328,10 @@ int main()
 	iWsaCleanup = WSACleanup();
 	if (iWsaCleanup == SOCKET_ERROR)
 	{
-		cerr << "WSA cleanup failed due to error :" << WSAGetLastError() << endl;
+		cerr << "|..............WSA cleanup failed due to error.............|" << WSAGetLastError() << endl;
 	}
 	else
-		cout << "wsacleanup successful" << endl;
+		cout << "|.................wsacleanup successful...................|" << endl;
 	system("PAUSE");
 	return 0;
 }
