@@ -18,6 +18,19 @@ vector<int> vect;
 int CurrentIpAddressOfClient;
 int CurrentIpAddressOfClientSubscriber;
 
+int FindNumberOfElements()
+{
+	int count = 0;
+	vector<int>::iterator it;
+	for (it = vect.begin(); it != vect.end(); it++)
+		count++;
+	return count;
+}
+
+void clearVect()
+{
+	vect.clear();
+}
 
 void showSQLError(unsigned int handleType, const SQLHANDLE& handle)
 {
@@ -104,7 +117,6 @@ void CheckSQL(char * SQLQuery)//function to connect to db and run query accordin
 	SQLFreeHandle(SQL_HANDLE_ENV, SQLEnvHandle);
 	// Frees the resources and disconnects
 }
-
 
 void GetPublished(char* RecvBuffer, int iRecvBuffer)
 {
@@ -251,8 +263,11 @@ void SendSubscribed(char* SenderBuffer, int iSenderBuffer)
 	char c[] = ")";
 	strcat(SQLQuery1, c);
 
+	clearVect();
 	CheckSQL(SQLQuery1);
 	vect.push_back(0);
+	int noOfEle;
+	noOfEle = FindNumberOfElements();
 	while (1)
 	{
 		//accept
@@ -264,22 +279,25 @@ void SendSubscribed(char* SenderBuffer, int iSenderBuffer)
 		{
 			cout << "|.................accept successfull......................|" << endl << endl;
 			cout << "|............The ip address connected is " << CurrentIpAddressOfClientSubscriber << ".......|" << endl;
-			break;
+			noOfEle--;
+			//send the buffer content to the client
+			int iSend;
+			//sending data
+			iSend = send(sAcceptSocket, SenderBuffer, iSenderBuffer, 0);
+			if (iSend == SOCKET_ERROR)
+			{
+				cerr << "|.............sending failed due to error.................|" << WSAGetLastError() << endl;
+			}
+			else
+			{
+				cout << "|...............sending data sucessfull...................|" << endl;
+				cout << "|.......................sent.............................::" << SenderBuffer << endl;
+			}
+			if (noOfEle == 1)
+				break;
 		}
 	}
-
-	int iSend;
-	//sending data
-	iSend = send(sAcceptSocket, SenderBuffer, iSenderBuffer, 0);
-	if (iSend == SOCKET_ERROR)
-	{
-		cerr << "|.............sending failed due to error.................|" << WSAGetLastError() << endl;
-	}
-	else
-	{
-		cout << "|...............sending data sucessfull...................|" << endl;
-		cout << "|.......................sent.............................::" << SenderBuffer << endl;
-	}
+	
 
 	//closing socket
 	iCloseSocket = closesocket(TCPServerSocket);
@@ -289,7 +307,6 @@ void SendSubscribed(char* SenderBuffer, int iSenderBuffer)
 	}
 	else
 		cout << "|....................socket closed........................|" << endl;
-
 }
 
 int main()
