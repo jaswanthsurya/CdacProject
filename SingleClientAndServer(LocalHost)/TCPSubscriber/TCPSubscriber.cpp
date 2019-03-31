@@ -6,7 +6,7 @@ using namespace std;
 
 int main()
 {
-	cout << ".....................TCP SUBSCRIBER........................." << endl;
+	cout << "|.....................TCP SUBSCRIBER.........................|" << endl;
 	WSADATA Winsockdata;//structure variable used to initialise winsock library
 	int iWsaStartup;
 	int iWsaCleanup;//variables to hold return types of startup and cleanup functions
@@ -34,10 +34,11 @@ int main()
 	iWsaStartup = WSAStartup(MAKEWORD(2, 2), &Winsockdata);
 	if (iWsaStartup != 0)
 	{
-		cerr << "Wsa Startup failed" << endl;
+		cerr << "|...................Wsa Startup failed.......................|" << endl;
 	}
 	else
-		cout << "Wsa Startup successfull" << endl;
+		cout << "|.................Wsa Startup successfull....................|" << endl;
+		
 
 	//filling the server details
 	TCPServerAdd.sin_family = AF_INET;
@@ -48,30 +49,29 @@ int main()
 	TCPClientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (TCPClientSocket == INVALID_SOCKET)
 	{
-		cerr << "socket creation failed due to error :" << WSAGetLastError() << endl;
+		cerr << "|............socket creation failed due to error.............|" << WSAGetLastError() << endl;
 	}
 	else
-		cout << "socket creation successfull" << endl;
+		cout << "|...............socket creation successfull..................|" << endl;
 
 	//connect
 	iConnect = connect(TCPClientSocket, (SOCKADDR *)&TCPServerAdd, sizeof(TCPServerAdd));
 	if (iConnect == SOCKET_ERROR)
 	{
-		cerr << "connect to server failed due to error" << WSAGetLastError() << endl;
+		cerr << "|...........connect to server failed due to error............|" << WSAGetLastError() << endl;
 	}
 	else
-		cout << "connection successfull" << endl;
+		cout << "|.................connection successfull.....................|" << endl;
 
 	//receive data
 	iRecv = recv(TCPClientSocket, RecvBuffer, iRecvBuffer, 0);
 	if (iRecv == SOCKET_ERROR)
 	{
-		cerr << "receiving failed due to error" << WSAGetLastError() << endl;
+		cerr << "|.............receiving failed due to error..................|" << WSAGetLastError() << endl;
 	}
 	else
 	{
-		cout << "receiving data succedded" << endl;
-		cout << "received :" << RecvBuffer << endl;
+		cout << "|..............receiving data succedded received.............|" << RecvBuffer << endl;
 	}
 
 	/*//sending data
@@ -90,19 +90,19 @@ int main()
 	iCloseSocket = closesocket(TCPClientSocket);
 	if (iCloseSocket == SOCKET_ERROR)
 	{
-		cerr << "closing socket failed due to error" << WSAGetLastError() << endl;
+		cerr << "|............closing socket failed due to error..............|" << WSAGetLastError() << endl;
 	}
 	else
-		cout << "socket closed" << endl;
+		cout << "|.....................socket closed..........................|" << endl;
 
 	//WSAcleanup
 	iWsaCleanup = WSACleanup();
 	if (iWsaCleanup == SOCKET_ERROR)
 	{
-		cerr << "WSA cleanup failed due to error :" << WSAGetLastError() << endl;
+		cerr << "|.............WSA cleanup failed due to error................|" << WSAGetLastError() << endl;
 	}
 	else
-		cout << "wsacleanup successful" << endl;
+		cout << "|...................wsacleanup successful....................|" << endl;
 	system("PAUSE");
 	return 0;
 }
