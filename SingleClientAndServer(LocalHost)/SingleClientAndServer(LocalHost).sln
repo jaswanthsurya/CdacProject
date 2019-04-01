@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConnToDb", "ConnToDb\ConnTo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TCPManagerCode(Includes sql connection)", "TCPManagerCode(Includes sql connection)\TCPManagerCode(Includes sql connection).vcxproj", "{29A4C3C6-FABB-4889-960C-201A3785986E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TCPManagerMultiThreading", "TCPManagerMultiThreading\TCPManagerMultiThreading.vcxproj", "{F6DEF339-1665-405E-9A5A-F1D4F11CE05B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -81,6 +83,14 @@ Global
 		{29A4C3C6-FABB-4889-960C-201A3785986E}.Release|x64.Build.0 = Release|x64
 		{29A4C3C6-FABB-4889-960C-201A3785986E}.Release|x86.ActiveCfg = Release|Win32
 		{29A4C3C6-FABB-4889-960C-201A3785986E}.Release|x86.Build.0 = Release|Win32
+		{F6DEF339-1665-405E-9A5A-F1D4F11CE05B}.Debug|x64.ActiveCfg = Debug|x64
+		{F6DEF339-1665-405E-9A5A-F1D4F11CE05B}.Debug|x64.Build.0 = Debug|x64
+		{F6DEF339-1665-405E-9A5A-F1D4F11CE05B}.Debug|x86.ActiveCfg = Debug|Win32
+		{F6DEF339-1665-405E-9A5A-F1D4F11CE05B}.Debug|x86.Build.0 = Debug|Win32
+		{F6DEF339-1665-405E-9A5A-F1D4F11CE05B}.Release|x64.ActiveCfg = Release|x64
+		{F6DEF339-1665-405E-9A5A-F1D4F11CE05B}.Release|x64.Build.0 = Release|x64
+		{F6DEF339-1665-405E-9A5A-F1D4F11CE05B}.Release|x86.ActiveCfg = Release|Win32
+		{F6DEF339-1665-405E-9A5A-F1D4F11CE05B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

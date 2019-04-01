@@ -14,9 +14,55 @@
 #pragma warning(disable:4996) 
 using namespace std;
 
+struct Info {//structure for thread function
+	SOCKET sAcceptSocket;
+	int CurrentIpAddressOfClient;
+	char* RecvBuffer;
+	int iRecvBuffer;
+};
+struct Info ThreadInfo;//structure for using
+
 vector<int> vect;
 int CurrentIpAddressOfClient;
 int CurrentIpAddressOfClientSubscriber;
+
+char **RecvInfo;
+int RecvInfoCount = 0;
+
+void SendSubscribed(char*SenderBuffer, int iSendBuffer);
+DWORD WINAPI ThreadFun(LPVOID str)
+{
+	int iRecv;
+	SOCKET sAcceptSocket = ThreadInfo.sAcceptSocket;
+	char* RecvBuffer = ThreadInfo.RecvBuffer;
+	int iRecvBuffer = ThreadInfo.iRecvBuffer;
+	//receive data
+	iRecv = recv(sAcceptSocket, RecvBuffer, iRecvBuffer, 0);
+	if (iRecv == SOCKET_ERROR)
+	{
+		cerr << "|.............receiving failed due to error...............|" << WSAGetLastError() << endl;
+	}
+	else
+	{
+		cout << "|...............receiving data succedded..................|" << endl;
+		cout << "|......................received..........................::" << RecvBuffer << endl;
+	}
+	RecvInfo[RecvInfoCount] = RecvBuffer;
+	SendSubscribed(RecvInfo[RecvInfoCount], strlen(RecvInfo[RecvInfoCount]));
+	RecvInfoCount++;
+	return 0;
+}
+
+int findVector(int CurrentIpAddress)
+{
+	vector<int>::iterator it;
+	for (it = vect.begin(); it != vect.end(); it++)
+	{
+		if (*it == CurrentIpAddress)
+			return 1;
+	}
+	return -1;
+}
 
 int FindNumberOfElements()
 {
@@ -123,15 +169,17 @@ void GetPublished(char* RecvBuffer, int iRecvBuffer)
 	SOCKET TCPServerSocket;//variable to hold the socket
 	int iCloseSocket;
 
+	RecvInfoCount = 0;
 	struct sockaddr_in TCPServerAdd;
 	struct sockaddr_in TCPClientAdd;//structures for storing client and server details like ip and port number
 	int iTCPClientAdd = sizeof(TCPClientAdd);
 
 	int iBind;
 	int iListen;
-	int iRecv;
+	int ThreadCount = 0;
 
 	SOCKET sAcceptSocket;
+	HANDLE CreateThreadHandle[3];//handle to thread
 
 
 	//filling the server details
@@ -148,6 +196,14 @@ void GetPublished(char* RecvBuffer, int iRecvBuffer)
 	else
 		cout << "|..............socket creation successfull................|" << endl;
 
+	int opt = 1;
+	int iSockOpt;
+	//setsock opt for reusing the port and address
+	iSockOpt = setsockopt(TCPServerSocket, SOL_SOCKET, SO_REUSEADDR, (CHAR*)&opt, sizeof(opt));
+	if (iSockOpt == SOCKET_ERROR)
+		cerr << "|..............sockopt failed due to error.................|" << WSAGetLastError() << endl;
+	else
+		cout << "|.................sockopt successfull.....................|" << endl;
 	//binding socket
 	iBind = bind(TCPServerSocket, (SOCKADDR*)&TCPServerAdd, sizeof(TCPServerAdd));
 	if (iBind == SOCKET_ERROR)
@@ -173,30 +229,40 @@ void GetPublished(char* RecvBuffer, int iRecvBuffer)
 	vect.push_back(0);
 	while (1)
 	{
+		cout << "hi" << endl;
 		//accept
 		sAcceptSocket = accept(TCPServerSocket, (SOCKADDR*)&TCPClientAdd, &iTCPClientAdd);
 		if (sAcceptSocket == INVALID_SOCKET)
 			cerr << "|..............accept failed due to error.................|" << WSAGetLastError() << endl;
+		cout << sAcceptSocket << endl;
 		CurrentIpAddressOfClient = TCPClientAdd.sin_addr.s_addr;
-		if (find(vect.begin(), vect.end(), CurrentIpAddressOfClient) != vect.end())
+		cout << CurrentIpAddressOfClient << endl;
+		if (findVector(CurrentIpAddressOfClient))
+		//if(sAcceptSocket!=INVALID_SOCKET)
 		{
 			cout << "|..................accept successfull.....................|" << endl << endl;
 			cout << "|............The ip address connected is " << CurrentIpAddressOfClient << ".......|" << endl;
-			break;
+			//create a thread to handle receiving multiple publishers
+			ThreadInfo.CurrentIpAddressOfClient = CurrentIpAddressOfClient;
+			ThreadInfo.iRecvBuffer = iRecvBuffer;
+			ThreadInfo.RecvBuffer = RecvBuffer;
+			ThreadInfo.sAcceptSocket = sAcceptSocket;
+			CreateThreadHandle[ThreadCount] = CreateThread(NULL,//security attributes thread is not inherited if null
+				0,//stack size for thread if 0 it uses size of executable
+				ThreadFun,//call back function
+				NULL,//parameter to function
+				0,//creation flag
+				NULL);//thread id
+			if (CreateThreadHandle[ThreadCount] == NULL)
+			{
+				cout << "creation of thread failed due to error (" << GetLastError() << ")" << endl;
+			}
+			ThreadCount++;
+			if (ThreadCount == 2)
+				break;
 		}
 	}
-	//receive data
-	iRecv = recv(sAcceptSocket, RecvBuffer, iRecvBuffer, 0);
-	if (iRecv == SOCKET_ERROR)
-	{
-		cerr << "|.............receiving failed due to error...............|" << WSAGetLastError() << endl;
-	}
-	else
-	{
-		cout << "|...............receiving data succedded..................|" << endl;
-		cout << "|......................received..........................::" << RecvBuffer << endl;
-	}
-
+	WaitForMultipleObjects(2, CreateThreadHandle, TRUE, INFINITE);
 	//closing socket
 	iCloseSocket = closesocket(TCPServerSocket);
 	if (iCloseSocket == SOCKET_ERROR)
@@ -205,6 +271,9 @@ void GetPublished(char* RecvBuffer, int iRecvBuffer)
 	}
 	else
 		cout << "|....................socket closed........................|" << endl;
+	CloseHandle(CreateThreadHandle[0]);
+	//CloseHandle(CreateThreadHandle[1]);
+	//CloseHandle(CreateThreadHandle[3]);//close the handle after use
 }
 
 void SendSubscribed(char* SenderBuffer, int iSenderBuffer)
@@ -314,13 +383,17 @@ int main()
 	char RecvBuffer[512];
 	int iRecvBuffer = strlen(RecvBuffer) + 1;//receiving buffer parameters
 
-	char SenderBuffer[512];
-	int iSenderBuffer = strlen(SenderBuffer);//sending buffer parameters
 	ZeroMemory(RecvBuffer, 512);
 
 	WSADATA Winsockdata;//structure variable used to initialise winsock library
 	int iWsaStartup;
 	int iWsaCleanup;//variables to hold return types of startup and cleanup functions
+
+	RecvInfo = new char*[3];
+	for (int i = 0; i < 3; i++)
+	{
+		RecvInfo[i] = new char[iRecvBuffer];
+	}
 
 	cout << "|.....................TCP MANAGER.........................|" << endl;
 	//initialise wsastartup
@@ -336,10 +409,7 @@ int main()
 
 
 	cout << endl << endl;
-	strcpy(SenderBuffer, RecvBuffer);
 
-	//*********************************************************************************************************
-	SendSubscribed(SenderBuffer, iSenderBuffer);
 
 	//WSAcleanup
 	iWsaCleanup = WSACleanup();
