@@ -23,8 +23,10 @@ struct Info {//structure for thread function
 struct Info ThreadInfo;//structure for using
 
 vector<int> vect;
+vector<int> repVect;
 int CurrentIpAddressOfClient;
 int CurrentIpAddressOfClientSubscriber;
+int PastIpAddressOfClientSubscriber;
 
 char **RecvInfo;
 int RecvInfoCount = 0;
@@ -62,6 +64,17 @@ int findVector(int CurrentIpAddress)
 			return 1;
 	}
 	return -1;
+}
+
+int findRep(int CurrentIpAddress)
+{
+	vector<int>::iterator it;
+	for (it = repVect.begin(); it != repVect.end(); it++)
+	{
+		if (*it == CurrentIpAddress)
+			return -1;
+	}
+	return 1;
 }
 
 int FindNumberOfElements()
@@ -229,14 +242,11 @@ void GetPublished(char* RecvBuffer, int iRecvBuffer)
 	vect.push_back(0);
 	while (1)
 	{
-		cout << "hi" << endl;
 		//accept
 		sAcceptSocket = accept(TCPServerSocket, (SOCKADDR*)&TCPClientAdd, &iTCPClientAdd);
 		if (sAcceptSocket == INVALID_SOCKET)
 			cerr << "|..............accept failed due to error.................|" << WSAGetLastError() << endl;
-		cout << sAcceptSocket << endl;
 		CurrentIpAddressOfClient = TCPClientAdd.sin_addr.s_addr;
-		cout << CurrentIpAddressOfClient << endl;
 		if (findVector(CurrentIpAddressOfClient))
 		//if(sAcceptSocket!=INVALID_SOCKET)
 		{
@@ -337,6 +347,7 @@ void SendSubscribed(char* SenderBuffer, int iSenderBuffer)
 	vect.push_back(0);
 	int noOfEle;
 	noOfEle = FindNumberOfElements();
+	PastIpAddressOfClientSubscriber = 0;
 	while (1)
 	{
 		//accept
@@ -344,26 +355,31 @@ void SendSubscribed(char* SenderBuffer, int iSenderBuffer)
 		if (sAcceptSocket == INVALID_SOCKET)
 			cerr << "|.............accept failed due to error..................|" << WSAGetLastError() << endl;
 		CurrentIpAddressOfClientSubscriber = TCPClientAdd.sin_addr.s_addr;
-		if (find(vect.begin(), vect.end(), CurrentIpAddressOfClientSubscriber) != vect.end())
+		if (findVector(CurrentIpAddressOfClientSubscriber))
 		{
-			cout << "|.................accept successfull......................|" << endl << endl;
-			cout << "|............The ip address connected is " << CurrentIpAddressOfClientSubscriber << ".......|" << endl;
-			noOfEle--;
-			//send the buffer content to the client
-			int iSend;
-			//sending data
-			iSend = send(sAcceptSocket, SenderBuffer, iSenderBuffer, 0);
-			if (iSend == SOCKET_ERROR)
+			if (findRep(CurrentIpAddressOfClientSubscriber) == 1)
 			{
-				cerr << "|.............sending failed due to error.................|" << WSAGetLastError() << endl;
+				cout << "|.................accept successfull......................|" << endl << endl;
+				cout << "|............The ip address connected is " << CurrentIpAddressOfClientSubscriber << ".......|" << endl;
+				noOfEle--;
+				//send the buffer content to the client
+				int iSend;
+				//sending data
+				iSend = send(sAcceptSocket, SenderBuffer, iSenderBuffer, 0);
+				if (iSend == SOCKET_ERROR)
+				{
+					cerr << "|.............sending failed due to error.................|" << WSAGetLastError() << endl;
+				}
+				else
+				{
+					cout << "|...............sending data sucessfull...................|" << endl;
+					cout << "|.......................sent.............................::" << SenderBuffer << endl;
+				}
+				repVect.push_back(CurrentIpAddressOfClientSubscriber);
+				if (noOfEle == 1)
+					break;
 			}
-			else
-			{
-				cout << "|...............sending data sucessfull...................|" << endl;
-				cout << "|.......................sent.............................::" << SenderBuffer << endl;
-			}
-			if (noOfEle == 1)
-				break;
+			
 		}
 	}
 
