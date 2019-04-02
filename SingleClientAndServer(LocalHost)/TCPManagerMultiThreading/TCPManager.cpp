@@ -10,13 +10,63 @@
 #include<vector>
 #include<algorithm>
 
+#define MaxThreads 2
 
 #pragma warning(disable:4996) 
 using namespace std;
 
 vector<int> vect;
+vector<int> repVect;
+SOCKET sAcceptSocket1;
 int CurrentIpAddressOfClient;
 int CurrentIpAddressOfClientSubscriber;
+int PastIpAddressOfClientSubscriber;
+
+CRITICAL_SECTION cs;
+void SendSubscribed(char*SenderBuffer, int iSendBuffer);
+DWORD WINAPI ThreadFun(LPVOID str)
+{
+	EnterCriticalSection(&cs);
+	int iRecv;
+	char RecvBuffer[512];
+	int iRecvBuffer = strlen(RecvBuffer) + 1;
+	//receive data
+	iRecv = recv(sAcceptSocket1, RecvBuffer, iRecvBuffer, 0);
+	if (iRecv == SOCKET_ERROR)
+	{
+		cerr << "|.............receiving failed due to error...............|" << WSAGetLastError() << endl;
+	}
+	else
+	{
+		cout << "|...............receiving data succedded..................|" << endl;
+		cout << "|......................received..........................::" << RecvBuffer << endl;
+	}
+	SendSubscribed(RecvBuffer, iRecvBuffer);
+	LeaveCriticalSection(&cs);
+	return 0;
+}
+
+int findVector(int CurrentIpAddress)
+{
+	vector<int>::iterator it;
+	for (it = vect.begin(); it != vect.end(); it++)
+	{
+		if (*it == CurrentIpAddress)
+			return 1;
+	}
+	return -1;
+}
+
+int findRep(int CurrentIpAddress)
+{
+	vector<int>::iterator it;
+	for (it = repVect.begin(); it != repVect.end(); it++)
+	{
+		if (*it == CurrentIpAddress)
+			return -1;
+	}
+	return 1;
+}
 
 int FindNumberOfElements()
 {
@@ -30,6 +80,7 @@ int FindNumberOfElements()
 void clearVect()
 {
 	vect.clear();
+	repVect.clear();
 }
 
 void showSQLError(unsigned int handleType, const SQLHANDLE& handle)
@@ -118,7 +169,7 @@ void CheckSQL(char * SQLQuery)//function to connect to db and run query accordin
 	// Frees the resources and disconnects
 }
 
-void GetPublished(char* RecvBuffer, int iRecvBuffer)
+void GetPublished()
 {
 	SOCKET TCPServerSocket;//variable to hold the socket
 	int iCloseSocket;
@@ -129,9 +180,9 @@ void GetPublished(char* RecvBuffer, int iRecvBuffer)
 
 	int iBind;
 	int iListen;
-	int iRecv;
+	int ThreadCount = 0;
 
-	SOCKET sAcceptSocket;
+	HANDLE CreateThreadHandle[3];//handle to thread
 
 
 	//filling the server details
@@ -148,6 +199,14 @@ void GetPublished(char* RecvBuffer, int iRecvBuffer)
 	else
 		cout << "|..............socket creation successfull................|" << endl;
 
+	int opt = 1;
+	int iSockOpt;
+	//setsock opt for reusing the port and address
+	iSockOpt = setsockopt(TCPServerSocket, SOL_SOCKET, SO_REUSEADDR, (CHAR*)&opt, sizeof(opt));
+	if (iSockOpt == SOCKET_ERROR)
+		cerr << "|..............sockopt failed due to error.................|" << WSAGetLastError() << endl;
+	else
+		cout << "|.................sockopt successfull.....................|" << endl;
 	//binding socket
 	iBind = bind(TCPServerSocket, (SOCKADDR*)&TCPServerAdd, sizeof(TCPServerAdd));
 	if (iBind == SOCKET_ERROR)
@@ -174,29 +233,31 @@ void GetPublished(char* RecvBuffer, int iRecvBuffer)
 	while (1)
 	{
 		//accept
-		sAcceptSocket = accept(TCPServerSocket, (SOCKADDR*)&TCPClientAdd, &iTCPClientAdd);
-		if (sAcceptSocket == INVALID_SOCKET)
+		sAcceptSocket1 = accept(TCPServerSocket, (SOCKADDR*)&TCPClientAdd, &iTCPClientAdd);
+		if (sAcceptSocket1 == INVALID_SOCKET)
 			cerr << "|..............accept failed due to error.................|" << WSAGetLastError() << endl;
 		CurrentIpAddressOfClient = TCPClientAdd.sin_addr.s_addr;
-		if (find(vect.begin(), vect.end(), CurrentIpAddressOfClient) != vect.end())
+		if (findVector(CurrentIpAddressOfClient))
 		{
 			cout << "|..................accept successfull.....................|" << endl << endl;
 			cout << "|............The ip address connected is " << CurrentIpAddressOfClient << ".......|" << endl;
-			break;
+			//create a thread to handle receiving multiple publishers
+			CreateThreadHandle[ThreadCount] = CreateThread(NULL,//security attributes thread is not inherited if null
+				0,//stack size for thread if 0 it uses size of executable
+				ThreadFun,//call back function
+				NULL,//parameter to function
+				0,//creation flag
+				NULL);//thread id
+			if (CreateThreadHandle[ThreadCount] == NULL)
+			{
+				cout << "creation of thread failed due to error (" << GetLastError() << ")" << endl;
+			}
+			ThreadCount++;
+			if (ThreadCount == MaxThreads)
+				break;
 		}
 	}
-	//receive data
-	iRecv = recv(sAcceptSocket, RecvBuffer, iRecvBuffer, 0);
-	if (iRecv == SOCKET_ERROR)
-	{
-		cerr << "|.............receiving failed due to error...............|" << WSAGetLastError() << endl;
-	}
-	else
-	{
-		cout << "|...............receiving data succedded..................|" << endl;
-		cout << "|......................received..........................::" << RecvBuffer << endl;
-	}
-
+	WaitForMultipleObjects(MaxThreads, CreateThreadHandle, TRUE, INFINITE);
 	//closing socket
 	iCloseSocket = closesocket(TCPServerSocket);
 	if (iCloseSocket == SOCKET_ERROR)
@@ -205,6 +266,12 @@ void GetPublished(char* RecvBuffer, int iRecvBuffer)
 	}
 	else
 		cout << "|....................socket closed........................|" << endl;
+	ThreadCount--;
+	while (ThreadCount!=-1)
+	{
+		CloseHandle(CreateThreadHandle[ThreadCount]);
+		ThreadCount--;
+	}
 }
 
 void SendSubscribed(char* SenderBuffer, int iSenderBuffer)
@@ -268,6 +335,7 @@ void SendSubscribed(char* SenderBuffer, int iSenderBuffer)
 	vect.push_back(0);
 	int noOfEle;
 	noOfEle = FindNumberOfElements();
+	PastIpAddressOfClientSubscriber = 0;
 	while (1)
 	{
 		//accept
@@ -275,26 +343,31 @@ void SendSubscribed(char* SenderBuffer, int iSenderBuffer)
 		if (sAcceptSocket == INVALID_SOCKET)
 			cerr << "|.............accept failed due to error..................|" << WSAGetLastError() << endl;
 		CurrentIpAddressOfClientSubscriber = TCPClientAdd.sin_addr.s_addr;
-		if (find(vect.begin(), vect.end(), CurrentIpAddressOfClientSubscriber) != vect.end())
+		if (findVector(CurrentIpAddressOfClientSubscriber))
 		{
-			cout << "|.................accept successfull......................|" << endl << endl;
-			cout << "|............The ip address connected is " << CurrentIpAddressOfClientSubscriber << ".......|" << endl;
-			noOfEle--;
-			//send the buffer content to the client
-			int iSend;
-			//sending data
-			iSend = send(sAcceptSocket, SenderBuffer, iSenderBuffer, 0);
-			if (iSend == SOCKET_ERROR)
+			if (findRep(CurrentIpAddressOfClientSubscriber) == 1)
 			{
-				cerr << "|.............sending failed due to error.................|" << WSAGetLastError() << endl;
+				cout << "|.................accept successfull......................|" << endl << endl;
+				cout << "|............The ip address connected is " << CurrentIpAddressOfClientSubscriber << ".......|" << endl;
+				noOfEle--;
+				//send the buffer content to the client
+				int iSend;
+				//sending data
+				iSend = send(sAcceptSocket, SenderBuffer, iSenderBuffer, 0);
+				if (iSend == SOCKET_ERROR)
+				{
+					cerr << "|.............sending failed due to error.................|" << WSAGetLastError() << endl;
+				}
+				else
+				{
+					cout << "|...............sending data sucessfull...................|" << endl;
+					cout << "|.......................sent.............................::" << SenderBuffer << endl;
+				}
+				repVect.push_back(CurrentIpAddressOfClientSubscriber);
+				if (noOfEle == 1)
+					break;
 			}
-			else
-			{
-				cout << "|...............sending data sucessfull...................|" << endl;
-				cout << "|.......................sent.............................::" << SenderBuffer << endl;
-			}
-			if (noOfEle == 1)
-				break;
+			
 		}
 	}
 
@@ -311,17 +384,11 @@ void SendSubscribed(char* SenderBuffer, int iSenderBuffer)
 
 int main()
 {
-	char RecvBuffer[512];
-	int iRecvBuffer = strlen(RecvBuffer) + 1;//receiving buffer parameters
-
-	char SenderBuffer[512];
-	int iSenderBuffer = strlen(SenderBuffer);//sending buffer parameters
-	ZeroMemory(RecvBuffer, 512);
-
 	WSADATA Winsockdata;//structure variable used to initialise winsock library
 	int iWsaStartup;
 	int iWsaCleanup;//variables to hold return types of startup and cleanup functions
 
+	InitializeCriticalSectionAndSpinCount(&cs, 1000);
 	cout << "|.....................TCP MANAGER.........................|" << endl;
 	//initialise wsastartup
 	iWsaStartup = WSAStartup(MAKEWORD(2, 2), &Winsockdata);
@@ -332,15 +399,12 @@ int main()
 	else
 		cout << "|................Wsa Startup successfull..................|" << endl;
 	//*******************************************************************************************************
-	GetPublished(RecvBuffer, iRecvBuffer);
+	GetPublished();
 
 
 	cout << endl << endl;
-	strcpy(SenderBuffer, RecvBuffer);
 
-	//*********************************************************************************************************
-	SendSubscribed(SenderBuffer, iSenderBuffer);
-
+	clearVect();
 	//WSAcleanup
 	iWsaCleanup = WSACleanup();
 	if (iWsaCleanup == SOCKET_ERROR)
@@ -349,6 +413,7 @@ int main()
 	}
 	else
 		cout << "|.................wsacleanup successful...................|" << endl;
+	DeleteCriticalSection(&cs);
 	system("PAUSE");
 	return 0;
 }

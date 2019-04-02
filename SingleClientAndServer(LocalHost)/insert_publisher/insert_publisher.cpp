@@ -1,9 +1,18 @@
 #include <iostream>
-#include <windows.h>
+#include <string>
+#include<cstring>
+#include<string.h>
+#include<sstream>
+#include "cgicc/Cgicc.h"
+#include "cgicc/HTTPHTMLHeader.h"
+#include "cgicc/HTMLClasses.h"
+#include<Windows.h>
 #include <sqlext.h>
 #include <sqltypes.h>
 #include <sql.h>
+
 using namespace std;
+using namespace cgicc;
 
 void showSQLError(unsigned int handleType, const SQLHANDLE& handle)
 {
@@ -11,16 +20,15 @@ void showSQLError(unsigned int handleType, const SQLHANDLE& handle)
 	SQLCHAR message[1024];
 	if (SQL_SUCCESS == SQLGetDiagRec(handleType, handle, 1, SQLState, NULL, message, 1024, NULL))
 		// Returns the current values of multiple fields of a diagnostic record that contains error, warning, and status information
-		cout << "SQL driver message: " << message << "\nSQL state: " << SQLState << "." << endl;
+		cout << "|.................SQL driver message......................|" << message << "\nSQL state: " << SQLState << "." << endl;
 }
 
-int main()
+void CheckSQL(char * SQLQuery)//function to connect to db and run query accordingly
 {
 	SQLHANDLE SQLEnvHandle = NULL;
 	SQLHANDLE SQLConnectionHandle = NULL;
 	SQLHANDLE SQLStatementHandle = NULL;
 	SQLRETURN retCode = 0;
-	char SQLQuery[] = "SELECT * FROM SubscriberDetails";
 
 	do {
 		if (SQL_SUCCESS != SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &SQLEnvHandle))
@@ -76,22 +84,92 @@ int main()
 			showSQLError(SQL_HANDLE_STMT, SQLStatementHandle);
 			break;
 		}
-		else {
-			int num;
-			char name[256];
-			while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
-				SQLGetData(SQLStatementHandle, 2, SQL_C_DEFAULT, &name, sizeof(name), NULL);
-				// Retrieves data for a single column in the result set
-				cout << name << endl;
-			}
-		}
 	} while (FALSE);
 
 	SQLFreeHandle(SQL_HANDLE_STMT, SQLStatementHandle);
 	SQLDisconnect(SQLConnectionHandle);
 	SQLFreeHandle(SQL_HANDLE_DBC, SQLConnectionHandle);
 	SQLFreeHandle(SQL_HANDLE_ENV, SQLEnvHandle);
-	// Frees the resources and disconnects
+	// Free the resources and disconnects
+}
 
-	getchar();
+int main(int argc, char **argv)
+{
+	string publisherName;
+	string publisherIp;
+	string topic;
+	try {
+		Cgicc cgi;
+		// Send HTTP header
+		std::cout << HTTPHTMLHeader() << endl;
+
+		// Set up the HTML document
+		std::cout << html() << head(title("cgicc example")) << endl;
+		std::cout << body() << endl;
+
+		// Print out the submitted element
+		form_iterator name = cgi.getElement("publisher_name");
+		if (name != cgi.getElements().end()) {
+			publisherName = **name;
+		}
+		name = cgi.getElement("publisher_ip");
+		if (name != cgi.getElements().end()) {
+			publisherIp = **name;
+		}
+		name = cgi.getElement("topic");
+		if (name != cgi.getElements().end()) {
+			topic = **name;
+		}
+		// Close the HTML document
+		std::cout << body() << html();
+	}
+	catch (exception& e) {
+		// handle any errors - omitted for brevity
+	}
+	//convert publisher name in string to char
+	int len = publisherName.length();
+	int i = 0;
+	char *publisherName1;
+	publisherName1 = new char[len + 1];
+	for (i = 0; i < len; i++)
+	{
+		publisherName1[i] = publisherName[i];
+	}
+	publisherName1[i] = '\0';
+
+	//convert publisherip in string to char
+	i = 0;
+	len = publisherIp.length();
+	char *publisherIp1 = new char[len + 1];
+	for (i = 0; i < len; i++)
+	{
+		publisherIp1[i] = publisherIp[i];
+	}
+	publisherIp1[i] = '\0';
+
+	//convert topic in string to char
+	i = 0;
+	len = topic.length();
+	char *topic1 = new char[len + 1];
+	for (i = 0; i < len; i++)
+	{
+		topic1[i] = topic[i];
+	}
+	topic1[i] = '\0';
+
+	//generate query
+	char SqlQuery[512] = "insert into PublisherDetails values('";
+	strcat_s(SqlQuery, publisherName1);
+	strcat_s(SqlQuery, "',");
+	strcat_s(SqlQuery, publisherIp1);
+	strcat_s(SqlQuery, ",'");
+	strcat_s(SqlQuery, topic1);
+	strcat_s(SqlQuery, "')");
+	//call to insert function
+	CheckSQL(SqlQuery);
+	//deallocate the associated memory
+	delete(publisherName1);
+	delete(publisherIp1);
+	delete(topic1);
+	return 0;
 }

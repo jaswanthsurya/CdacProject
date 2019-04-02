@@ -1,12 +1,47 @@
-#include<iostream>
+#include <iostream>
+#include <vector>
+#include <string>
 #include<WinSock2.h>
+#include "cgicc/Cgicc.h"
+#include "cgicc/HTTPHTMLHeader.h"
+#include "cgicc/HTMLClasses.h"
 
-#pragma warning(disable:4996) 
 using namespace std;
-
-int main()
+using namespace cgicc;
+#pragma warning(disable:4996) 
+int
+main(int argc,
+	char **argv)
 {
-	cout << ".....................TCP PUBLISHER........................." << endl;
+	form_iterator name;
+	Cgicc cgi;
+	try {
+		
+
+		// Send HTTP header
+		cout << HTTPHTMLHeader() << endl;
+
+		// Set up the HTML document
+		cout << html() << head(title("cgicc example")) << endl;
+		cout << body() << endl;
+
+		// Print out the submitted element
+		name = cgi.getElement("name");
+		if (name != cgi.getElements().end()) {
+			cout << "<b>Sending this message to the server :</b> " << **name << endl;
+		}
+
+		// Close the HTML document
+		cout << body() << html();
+	}
+	catch (exception& e) {
+		// handle any errors - omitted for brevity
+	}
+	//system("pause");
+	
+	std::cout << ".....................TCP PUBLISHER........................." << endl;
+	if (name != cgi.getElements().end())
+		std::cout << "<br>Your message is " << name->getValue() << endl;
 	WSADATA Winsockdata;//structure variable used to initialise winsock library
 	int iWsaStartup;
 	int iWsaCleanup;//variables to hold return types of startup and cleanup functions
@@ -34,10 +69,10 @@ int main()
 	iWsaStartup = WSAStartup(MAKEWORD(2, 2), &Winsockdata);
 	if (iWsaStartup != 0)
 	{
-		cerr << "Wsa Startup failed" << endl;
+		std::cerr << "Wsa Startup failed" << endl;
 	}
 	else
-		cout << "Wsa Startup successfull" << endl;
+		std::cout << "Wsa Startup successfull" << endl;
 
 	//filling the server details
 	TCPServerAdd.sin_family = AF_INET;
@@ -51,7 +86,7 @@ int main()
 		cerr << "socket creation failed due to error :" << WSAGetLastError() << endl;
 	}
 	else
-		cout << "socket creation successfull" << endl;
+		std::cout << "socket creation successfull" << endl;
 
 	//connect
 	iConnect = connect(TCPClientSocket, (SOCKADDR *)&TCPServerAdd, sizeof(TCPServerAdd));
@@ -60,7 +95,7 @@ int main()
 		cerr << "connect to server failed due to error" << WSAGetLastError() << endl;
 	}
 	else
-		cout << "connection successfull" << endl;
+		std::cout << "connection successfull" << endl;
 
 	//receive data
 	/*iRecv = recv(TCPClientSocket, RecvBuffer, iRecvBuffer, 0);
@@ -75,6 +110,15 @@ int main()
 	}*/
 
 	//sending data
+
+	//copying the input data from form to sender buffer
+	int i; 
+	string sendthis = name->getValue();
+	//sendthis = "hey";
+	for (i = 0;i < sendthis.length(); i++) {
+		SenderBuffer[i] = sendthis[i];
+	}
+	SenderBuffer[i] = '\0';
 	iSend = send(TCPClientSocket, SenderBuffer, iSenderBuffer, 0);
 	if (iSend == SOCKET_ERROR)
 	{
@@ -82,8 +126,8 @@ int main()
 	}
 	else
 	{
-		cout << "sending data sucessful" << endl;
-		cout << "sent :" << SenderBuffer << endl;
+		std::cout << "sending data sucessful" << endl;
+		std::cout << "sent :" << SenderBuffer << endl;
 	}
 
 	//closing socket
@@ -93,7 +137,7 @@ int main()
 		cerr << "closing socket failed due to error" << WSAGetLastError() << endl;
 	}
 	else
-		cout << "socket closed" << endl;
+		std::cout << "socket closed" << endl;
 
 	//WSAcleanup
 	iWsaCleanup = WSACleanup();
@@ -102,7 +146,7 @@ int main()
 		cerr << "WSA cleanup failed due to error :" << WSAGetLastError() << endl;
 	}
 	else
-		cout << "wsacleanup successful" << endl;
+		std::cout << "wsacleanup successful" << endl;
 	system("PAUSE");
 	return 0;
 }
