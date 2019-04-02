@@ -10,36 +10,28 @@
 #include<vector>
 #include<algorithm>
 
+#define MaxThreads 2
 
 #pragma warning(disable:4996) 
 using namespace std;
 
-struct Info {//structure for thread function
-	SOCKET sAcceptSocket;
-	int CurrentIpAddressOfClient;
-	char* RecvBuffer;
-	int iRecvBuffer;
-};
-struct Info ThreadInfo;//structure for using
-
 vector<int> vect;
 vector<int> repVect;
+SOCKET sAcceptSocket1;
 int CurrentIpAddressOfClient;
 int CurrentIpAddressOfClientSubscriber;
 int PastIpAddressOfClientSubscriber;
 
-char **RecvInfo;
-int RecvInfoCount = 0;
-
+CRITICAL_SECTION cs;
 void SendSubscribed(char*SenderBuffer, int iSendBuffer);
 DWORD WINAPI ThreadFun(LPVOID str)
 {
+	EnterCriticalSection(&cs);
 	int iRecv;
-	SOCKET sAcceptSocket = ThreadInfo.sAcceptSocket;
-	char* RecvBuffer = ThreadInfo.RecvBuffer;
-	int iRecvBuffer = ThreadInfo.iRecvBuffer;
+	char RecvBuffer[512];
+	int iRecvBuffer = strlen(RecvBuffer) + 1;
 	//receive data
-	iRecv = recv(sAcceptSocket, RecvBuffer, iRecvBuffer, 0);
+	iRecv = recv(sAcceptSocket1, RecvBuffer, iRecvBuffer, 0);
 	if (iRecv == SOCKET_ERROR)
 	{
 		cerr << "|.............receiving failed due to error...............|" << WSAGetLastError() << endl;
@@ -49,9 +41,8 @@ DWORD WINAPI ThreadFun(LPVOID str)
 		cout << "|...............receiving data succedded..................|" << endl;
 		cout << "|......................received..........................::" << RecvBuffer << endl;
 	}
-	RecvInfo[RecvInfoCount] = RecvBuffer;
-	SendSubscribed(RecvInfo[RecvInfoCount], strlen(RecvInfo[RecvInfoCount]));
-	RecvInfoCount++;
+	SendSubscribed(RecvBuffer, iRecvBuffer);
+	LeaveCriticalSection(&cs);
 	return 0;
 }
 
@@ -89,6 +80,7 @@ int FindNumberOfElements()
 void clearVect()
 {
 	vect.clear();
+	repVect.clear();
 }
 
 void showSQLError(unsigned int handleType, const SQLHANDLE& handle)
@@ -177,12 +169,11 @@ void CheckSQL(char * SQLQuery)//function to connect to db and run query accordin
 	// Frees the resources and disconnects
 }
 
-void GetPublished(char* RecvBuffer, int iRecvBuffer)
+void GetPublished()
 {
 	SOCKET TCPServerSocket;//variable to hold the socket
 	int iCloseSocket;
 
-	RecvInfoCount = 0;
 	struct sockaddr_in TCPServerAdd;
 	struct sockaddr_in TCPClientAdd;//structures for storing client and server details like ip and port number
 	int iTCPClientAdd = sizeof(TCPClientAdd);
@@ -191,7 +182,6 @@ void GetPublished(char* RecvBuffer, int iRecvBuffer)
 	int iListen;
 	int ThreadCount = 0;
 
-	SOCKET sAcceptSocket;
 	HANDLE CreateThreadHandle[3];//handle to thread
 
 
@@ -243,20 +233,15 @@ void GetPublished(char* RecvBuffer, int iRecvBuffer)
 	while (1)
 	{
 		//accept
-		sAcceptSocket = accept(TCPServerSocket, (SOCKADDR*)&TCPClientAdd, &iTCPClientAdd);
-		if (sAcceptSocket == INVALID_SOCKET)
+		sAcceptSocket1 = accept(TCPServerSocket, (SOCKADDR*)&TCPClientAdd, &iTCPClientAdd);
+		if (sAcceptSocket1 == INVALID_SOCKET)
 			cerr << "|..............accept failed due to error.................|" << WSAGetLastError() << endl;
 		CurrentIpAddressOfClient = TCPClientAdd.sin_addr.s_addr;
 		if (findVector(CurrentIpAddressOfClient))
-		//if(sAcceptSocket!=INVALID_SOCKET)
 		{
 			cout << "|..................accept successfull.....................|" << endl << endl;
 			cout << "|............The ip address connected is " << CurrentIpAddressOfClient << ".......|" << endl;
 			//create a thread to handle receiving multiple publishers
-			ThreadInfo.CurrentIpAddressOfClient = CurrentIpAddressOfClient;
-			ThreadInfo.iRecvBuffer = iRecvBuffer;
-			ThreadInfo.RecvBuffer = RecvBuffer;
-			ThreadInfo.sAcceptSocket = sAcceptSocket;
 			CreateThreadHandle[ThreadCount] = CreateThread(NULL,//security attributes thread is not inherited if null
 				0,//stack size for thread if 0 it uses size of executable
 				ThreadFun,//call back function
@@ -268,11 +253,11 @@ void GetPublished(char* RecvBuffer, int iRecvBuffer)
 				cout << "creation of thread failed due to error (" << GetLastError() << ")" << endl;
 			}
 			ThreadCount++;
-			if (ThreadCount == 2)
+			if (ThreadCount == MaxThreads)
 				break;
 		}
 	}
-	WaitForMultipleObjects(2, CreateThreadHandle, TRUE, INFINITE);
+	WaitForMultipleObjects(MaxThreads, CreateThreadHandle, TRUE, INFINITE);
 	//closing socket
 	iCloseSocket = closesocket(TCPServerSocket);
 	if (iCloseSocket == SOCKET_ERROR)
@@ -281,9 +266,12 @@ void GetPublished(char* RecvBuffer, int iRecvBuffer)
 	}
 	else
 		cout << "|....................socket closed........................|" << endl;
-	CloseHandle(CreateThreadHandle[0]);
-	//CloseHandle(CreateThreadHandle[1]);
-	//CloseHandle(CreateThreadHandle[3]);//close the handle after use
+	ThreadCount--;
+	while (ThreadCount!=-1)
+	{
+		CloseHandle(CreateThreadHandle[ThreadCount]);
+		ThreadCount--;
+	}
 }
 
 void SendSubscribed(char* SenderBuffer, int iSenderBuffer)
@@ -396,21 +384,11 @@ void SendSubscribed(char* SenderBuffer, int iSenderBuffer)
 
 int main()
 {
-	char RecvBuffer[512];
-	int iRecvBuffer = strlen(RecvBuffer) + 1;//receiving buffer parameters
-
-	ZeroMemory(RecvBuffer, 512);
-
 	WSADATA Winsockdata;//structure variable used to initialise winsock library
 	int iWsaStartup;
 	int iWsaCleanup;//variables to hold return types of startup and cleanup functions
 
-	RecvInfo = new char*[3];
-	for (int i = 0; i < 3; i++)
-	{
-		RecvInfo[i] = new char[iRecvBuffer];
-	}
-
+	InitializeCriticalSectionAndSpinCount(&cs, 1000);
 	cout << "|.....................TCP MANAGER.........................|" << endl;
 	//initialise wsastartup
 	iWsaStartup = WSAStartup(MAKEWORD(2, 2), &Winsockdata);
@@ -421,12 +399,12 @@ int main()
 	else
 		cout << "|................Wsa Startup successfull..................|" << endl;
 	//*******************************************************************************************************
-	GetPublished(RecvBuffer, iRecvBuffer);
+	GetPublished();
 
 
 	cout << endl << endl;
 
-
+	clearVect();
 	//WSAcleanup
 	iWsaCleanup = WSACleanup();
 	if (iWsaCleanup == SOCKET_ERROR)
@@ -435,6 +413,7 @@ int main()
 	}
 	else
 		cout << "|.................wsacleanup successful...................|" << endl;
+	DeleteCriticalSection(&cs);
 	system("PAUSE");
 	return 0;
 }
