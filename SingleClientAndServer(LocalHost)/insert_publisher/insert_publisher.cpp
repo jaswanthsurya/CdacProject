@@ -1,4 +1,5 @@
 #include <iostream>
+#include<WinSock2.h>
 #include <string>
 #include<cstring>
 #include<string.h>
@@ -11,6 +12,7 @@
 #include <sqltypes.h>
 #include <sql.h>
 
+#pragma warning(disable:4996)
 using namespace std;
 using namespace cgicc;
 
@@ -139,14 +141,20 @@ int main(int argc, char **argv)
 
 	//convert publisherip in string to char
 	i = 0;
-	len = publisherIp.length();
-	char *publisherIp1 = new char[len + 1];
-	for (i = 0; i < len; i++)
+	char* publisherIp1 = new char[publisherIp.length()+1];
+	for (i = 0; i < publisherIp.length(); i++)
 	{
 		publisherIp1[i] = publisherIp[i];
 	}
 	publisherIp1[i] = '\0';
-
+	unsigned long publisherIpNum=inet_addr(publisherIp1);
+	delete(publisherIp1);
+	//convert number to character array
+	stringstream srs;
+	srs << publisherIpNum;
+	string temp = srs.str();
+	char *publisherIp2 = (char *)temp.c_str();
+	
 	//convert topic in string to char
 	i = 0;
 	len = topic.length();
@@ -161,7 +169,7 @@ int main(int argc, char **argv)
 	char SqlQuery[512] = "insert into PublisherDetails values('";
 	strcat_s(SqlQuery, publisherName1);
 	strcat_s(SqlQuery, "',");
-	strcat_s(SqlQuery, publisherIp1);
+	strcat_s(SqlQuery, publisherIp2);
 	strcat_s(SqlQuery, ",'");
 	strcat_s(SqlQuery, topic1);
 	strcat_s(SqlQuery, "')");
@@ -169,7 +177,7 @@ int main(int argc, char **argv)
 	CheckSQL(SqlQuery);
 	//deallocate the associated memory
 	delete(publisherName1);
-	delete(publisherIp1);
+	delete(publisherIp2);
 	delete(topic1);
 	return 0;
 }

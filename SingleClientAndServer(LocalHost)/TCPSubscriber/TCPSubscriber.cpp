@@ -6,8 +6,6 @@ using namespace std;
 
 int main()
 {
-	while (1)
-	{
 		cout << "|.....................TCP SUBSCRIBER.........................|" << endl;
 		WSADATA Winsockdata;//structure variable used to initialise winsock library
 		int iWsaStartup;
@@ -105,7 +103,6 @@ int main()
 		}
 		else
 			cout << "|...................wsacleanup successful....................|" << endl;
-	}
 	system("PAUSE");
 	return 0;
 }

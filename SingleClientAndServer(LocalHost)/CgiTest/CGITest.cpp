@@ -87,28 +87,27 @@ void CheckSQL(char * SQLQuery, int noOfCol)//function to connect to db and run q
 		else {
 			if (noOfCol == 4)
 			{
-				cout << "Sno" << "&nbsp&nbsp&nbsp&nbsp" << "Name" << "&nbsp&nbsp&nbsp&nbsp" 
+				int Ip;
+				char name[20], topic[20];
+				cout <<"Name" << "&nbsp&nbsp&nbsp&nbsp" 
 					<< "IpAddress" << "&nbsp&nbsp&nbsp&nbsp" << "Topic" << "<br>";
 				while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
-					int Sno, Ip;
-					char name[20], topic[20];
-					SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &Sno, sizeof(Sno), NULL);
-					SQLGetData(SQLStatementHandle, 2, SQL_C_DEFAULT, &name, sizeof(name), NULL);
-					SQLGetData(SQLStatementHandle, 3, SQL_C_DEFAULT, &Ip, sizeof(Ip), NULL);
-					SQLGetData(SQLStatementHandle, 4, SQL_C_DEFAULT, &topic, sizeof(topic), NULL);
-					cout << Sno << "&nbsp&nbsp&nbsp&nbsp&nbsp" << name 
+					SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &name, sizeof(name), NULL);
+					SQLGetData(SQLStatementHandle, 2, SQL_C_DEFAULT, &Ip, sizeof(Ip), NULL);
+					SQLGetData(SQLStatementHandle, 3, SQL_C_DEFAULT, &topic, sizeof(topic), NULL);
+					cout << name 
 						<< "&nbsp&nbsp&nbsp&nbsp&nbsp" << Ip << "&nbsp&nbsp&nbsp&nbsp&nbsp" << topic << "<br>";
 				}
 			}
 			else if (noOfCol == 2)
 			{
-				cout << "Sno" << "&nbsp&nbsp&nbsp&nbsp" << "Topic" << "&nbsp&nbsp&nbsp&nbsp" << "<br>";
+				int SNo;
+				char topic[20];
+				cout << "SNo" << "&nbsp&nbsp&nbsp&nbsp" << "Topic" << "&nbsp&nbsp&nbsp&nbsp" << "<br>";
 				while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
-					int Sno;
-					char topic[20];
-					SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &Sno, sizeof(Sno), NULL);
+					SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &SNo, sizeof(SNo), NULL);
 					SQLGetData(SQLStatementHandle, 2, SQL_C_DEFAULT, &topic, sizeof(topic), NULL);
-					cout << Sno << "&nbsp&nbsp&nbsp&nbsp&nbsp" << topic << "&nbsp&nbsp&nbsp&nbsp&nbsp" << "<br>";
+					cout << SNo << "&nbsp&nbsp&nbsp&nbsp&nbsp" << topic << "&nbsp&nbsp&nbsp&nbsp&nbsp" << "<br>";
 				}
 			}
 		}
