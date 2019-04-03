@@ -46,7 +46,7 @@ int main()
 	//filling the server details
 	TCPServerAdd.sin_family = AF_INET;
 	TCPServerAdd.sin_addr.s_addr = htonl(INADDR_ANY);
-	TCPServerAdd.sin_port = htons(8100);
+	TCPServerAdd.sin_port = htons(8000);
 
 	//socket creation
 	TCPServerSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -82,17 +82,18 @@ int main()
 	else
 		cout << "accept successfull" << endl;
 	cout << TCPClientAdd.sin_addr.s_addr << endl;
-	//sending data
-	iSend = send(sAcceptSocket, SenderBuffer, iSenderBuffer, 0);
-	if (iSend == SOCKET_ERROR)
-	{
-		cerr << "sending failed due to error: " << WSAGetLastError() << endl;
-	}
-	else
-	{
-		cout << "sending data sucessful" << endl;
-		cout << "sent :" << SenderBuffer << endl;
-	}
+	cout << inet_addr("192.168.56.2") << endl;
+	////sending data
+	//iSend = send(sAcceptSocket, SenderBuffer, iSenderBuffer, 0);
+	//if (iSend == SOCKET_ERROR)
+	//{
+	//	cerr << "sending failed due to error: " << WSAGetLastError() << endl;
+	//}
+	//else
+	//{
+	//	cout << "sending data sucessful" << endl;
+	//	cout << "sent :" << SenderBuffer << endl;
+	//}
 
 	//receive data
 	iRecv = recv(sAcceptSocket, RecvBuffer, iRecvBuffer, 0);
