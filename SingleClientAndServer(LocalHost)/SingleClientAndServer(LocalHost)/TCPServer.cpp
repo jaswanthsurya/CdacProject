@@ -81,8 +81,8 @@ int main()
 		cerr << "accept failed due to error: " << WSAGetLastError() << endl;
 	else
 		cout << "accept successfull" << endl;
-	cout << TCPClientAdd.sin_addr.s_addr << endl;
-	cout << inet_addr("192.168.56.2") << endl;
+	cout << inet_addr("192.168.56.9") << endl;
+	
 	////sending data
 	//iSend = send(sAcceptSocket, SenderBuffer, iSenderBuffer, 0);
 	//if (iSend == SOCKET_ERROR)

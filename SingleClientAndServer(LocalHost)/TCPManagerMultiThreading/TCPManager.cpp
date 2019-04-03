@@ -10,7 +10,7 @@
 #include<vector>
 #include<algorithm>
 
-#define MaxThreads 2
+#define MaxThreads 10
 
 #pragma warning(disable:4996) 
 using namespace std;
