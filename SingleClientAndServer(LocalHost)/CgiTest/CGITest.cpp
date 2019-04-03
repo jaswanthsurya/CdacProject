@@ -89,26 +89,69 @@ void CheckSQL(char * SQLQuery, int noOfCol)//function to connect to db and run q
 			{
 				int Ip;
 				char name[20], topic[20];
-				cout <<"Name" << "&nbsp&nbsp&nbsp&nbsp" 
-					<< "IpAddress" << "&nbsp&nbsp&nbsp&nbsp" << "Topic" << "<br>";
+				//adding table head
+				cout << "<table class=\"table\">\n"
+					"  <thead class=\"thead-dark\">\n"
+					"    <tr>\n"
+					"      <th scope=\"col\">NAME</th>\n"
+					"      <th scope=\"col\">IP</th>\n"
+					"      <th scope=\"col\">TOPIC</th>\n"
+					"    </tr>\n"
+					"  </thead>\n";
+				//table head done
+				cout << "  <tbody>\n";
 				while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
 					SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &name, sizeof(name), NULL);
 					SQLGetData(SQLStatementHandle, 2, SQL_C_DEFAULT, &Ip, sizeof(Ip), NULL);
 					SQLGetData(SQLStatementHandle, 3, SQL_C_DEFAULT, &topic, sizeof(topic), NULL);
-					cout << name 
-						<< "&nbsp&nbsp&nbsp&nbsp&nbsp" << Ip << "&nbsp&nbsp&nbsp&nbsp&nbsp" << topic << "<br>";
+					cout << "<tr>\n";
+					cout << "<td>";
+					cout << name;
+					cout << "</td> \n";
+					cout << "<td>";
+					cout << Ip;
+					cout << "</td> \n";
+					cout << "<td>";
+					cout << topic;
+					cout << "</td> \n";
+					cout << "</tr>";
 				}
+				cout << "  </tbody>\n"
+					"</table>\n";
 			}
 			else if (noOfCol == 2)
 			{
 				int SNo;
 				char topic[20];
-				cout << "SNo" << "&nbsp&nbsp&nbsp&nbsp" << "Topic" << "&nbsp&nbsp&nbsp&nbsp" << "<br>";
+				//cout << "SNo" << "&nbsp&nbsp&nbsp&nbsp" << "Topic" << "&nbsp&nbsp&nbsp&nbsp" << "<br>";
+				//adding table head
+				cout << "<table class=\"table\">\n"
+					"  <thead class=\"thead-dark\">\n"
+					"    <tr>\n"
+					"      <th scope=\"col\">NO</th>\n"
+					"      <th scope=\"col\">TOPIC</th>\n"
+					"    </tr>\n"
+					"  </thead>\n";
+				//table head done
+				cout << "  <tbody>\n";
+				int i = 0;
 				while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
+					i++;
 					SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &SNo, sizeof(SNo), NULL);
 					SQLGetData(SQLStatementHandle, 2, SQL_C_DEFAULT, &topic, sizeof(topic), NULL);
-					cout << SNo << "&nbsp&nbsp&nbsp&nbsp&nbsp" << topic << "&nbsp&nbsp&nbsp&nbsp&nbsp" << "<br>";
+					//cout << SNo << "&nbsp&nbsp&nbsp&nbsp&nbsp" << topic << "&nbsp&nbsp&nbsp&nbsp&nbsp" << "<br>";
+					cout << "<tr>\n";
+					cout << "<td>";
+					cout << i;
+					cout << "</td> \n";
+					cout << "<td>";
+					cout << topic;
+					cout << "</td> \n";
+					cout << "</tr>";
 				}
+				cout << "  </tbody>\n"
+					"</table>\n";
+				
 			}
 		}
 	} while (FALSE);
@@ -148,7 +191,7 @@ int main(int argc,char **argv)
 			 "  <!-- Bootstrap core JavaScript -->\n"
 			"  <script src=\"/vendor/jquery/jquery.min.js\"></script>\n"
 			"  <script src=\"/vendor/bootstrap/js/bootstrap.bundle.min.js\"></script>"
-			"  <script src=\"/vendor/bootstrap/js/bootstrap.details.js\"></script>"
+			"  <script src=\"/vendor/bootstrap/js/details.js\"></script>"
 			"                \n"
 			"    </head>\n"
 			"    <body>\n"
@@ -163,10 +206,10 @@ int main(int argc,char **argv)
 			"  <div class=\"collapse navbar-collapse\" id=\"navbarTogglerDemo02\">\n"
 			"    <ul class=\"navbar-nav mr-auto mt-2 mt-lg-0\">\n"
 			"      <li class=\"nav-item active\">\n"
-			"        <a class=\"nav-link\" href=\"manager.html\">Home <span class=\"sr-only\">(current)</span></a>\n"
+			"        <a class=\"nav-link\" href=\"../manager.html\">Home <span class=\"sr-only\">(current)</span></a>\n"
 			"      </li>\n"
 			"      <li class=\"nav-item\">\n"
-			"        <a class=\"nav-link\" href=\"detailsfinal.html\">View Details</a>\n"
+			"        <a class=\"nav-link\" href=\"../detailsfinal.html\">View Details</a>\n"
 			"      </li>\n"
 			"    </ul>\n"
 			"  </div>\n"
@@ -197,6 +240,46 @@ int main(int argc,char **argv)
 				flag = 1;
 			}
 		}
+		if (flag == 0)
+		{
+			stringstream strs;
+			strs << SqlQuery;
+			SqlQuery = strs.str();
+			char * SqlQuery1 = (char *)SqlQuery.c_str();
+			CheckSQL(SqlQuery1, noOfCol);
+		}
+		//added developers section
+
+		//DEVELOPERS SECTION
+
+		cout << "<section class=\"testimonials text-center bg-light\">\n"
+			"    <div class=\"container\">\n"
+			"      <h2 class=\"mb-5\">Developers</h2>\n"
+			"      <div class=\"row\">\n"
+			"        <div class=\"col-lg-4\">\n"
+			"          <div class=\"testimonial-item mx-auto mb-5 mb-lg-0\">\n"
+			"            <img class=\"img-fluid rounded-circle mb-3\" src=\"/img/pp.jpg\" alt=\"\">\n"
+			"            <h5>Subodh Thota</h5>\n"
+			"          </div>\n"
+			"        </div>\n"
+			"        <div class=\"col-lg-4\">\n"
+			"          <div class=\"testimonial-item mx-auto mb-5 mb-lg-0\">\n"
+			"            <img class=\"img-fluid rounded-circle mb-3\" src=\"/img/surya.jpg\" alt=\"\">\n"
+			"            <h5>Jaswanth Surya</h5>\n"
+			"          </div>\n"
+			"        </div>\n"
+			"        <div class=\"col-lg-4\">\n"
+			"          <div class=\"testimonial-item mx-auto mb-5 mb-lg-0\">\n"
+			"            <img class=\"img-fluid rounded-circle mb-3\" src=\"/img/haritha.jpg\" alt=\"\">\n"
+			"            <h5>Haritha</h5>\n"
+			"          </div>\n"
+			"        </div>\n"
+			"      </div>\n"
+			"    </div>\n"
+			"  </section>\n"
+			"\n";
+
+
 
 		// Close the HTML document
 		std::cout << body() << html();
@@ -204,12 +287,5 @@ int main(int argc,char **argv)
 	catch (exception& e) {
 		// handle any errors - omitted for brevity
 	}
-	if (flag == 0)
-	{
-		stringstream strs;
-		strs << SqlQuery;
-		SqlQuery = strs.str();
-		char * SqlQuery1 = (char *)SqlQuery.c_str();
-		CheckSQL(SqlQuery1,noOfCol);
-	}
+	
 }
