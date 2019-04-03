@@ -27,6 +27,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "insert_subscriber", "insert
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "subscriber_with_webpage1", "subscriber_with_webpage\subscriber_with_webpage.vcxproj", "{8D0DD470-C2DB-48C3-A80C-9C6E91623207}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "subscriber_with_DetailsOfPreviousMessages", "subscriber_with_DetailsOfPreviousMessages\subscriber_with_DetailsOfPreviousMessages.vcxproj", "{C235A95F-80AC-4840-8CC0-CF6852E0E794}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -131,6 +133,14 @@ Global
 		{8D0DD470-C2DB-48C3-A80C-9C6E91623207}.Release|x64.Build.0 = Release|x64
 		{8D0DD470-C2DB-48C3-A80C-9C6E91623207}.Release|x86.ActiveCfg = Release|Win32
 		{8D0DD470-C2DB-48C3-A80C-9C6E91623207}.Release|x86.Build.0 = Release|Win32
+		{C235A95F-80AC-4840-8CC0-CF6852E0E794}.Debug|x64.ActiveCfg = Debug|x64
+		{C235A95F-80AC-4840-8CC0-CF6852E0E794}.Debug|x64.Build.0 = Debug|x64
+		{C235A95F-80AC-4840-8CC0-CF6852E0E794}.Debug|x86.ActiveCfg = Debug|Win32
+		{C235A95F-80AC-4840-8CC0-CF6852E0E794}.Debug|x86.Build.0 = Debug|Win32
+		{C235A95F-80AC-4840-8CC0-CF6852E0E794}.Release|x64.ActiveCfg = Release|x64
+		{C235A95F-80AC-4840-8CC0-CF6852E0E794}.Release|x64.Build.0 = Release|x64
+		{C235A95F-80AC-4840-8CC0-CF6852E0E794}.Release|x86.ActiveCfg = Release|Win32
+		{C235A95F-80AC-4840-8CC0-CF6852E0E794}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
