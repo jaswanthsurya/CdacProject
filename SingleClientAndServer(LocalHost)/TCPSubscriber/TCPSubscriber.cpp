@@ -6,8 +6,6 @@ using namespace std;
 
 int main()
 {
-	while (1)
-	{
 		cout << "|.....................TCP SUBSCRIBER.........................|" << endl;
 		WSADATA Winsockdata;//structure variable used to initialise winsock library
 		int iWsaStartup;
@@ -44,7 +42,7 @@ int main()
 
 		//filling the server details
 		TCPServerAdd.sin_family = AF_INET;
-		TCPServerAdd.sin_addr.s_addr = inet_addr("192.168.56.2");
+		TCPServerAdd.sin_addr.s_addr = inet_addr("127.0.0.1");
 		TCPServerAdd.sin_port = htons(8100);
 
 		//socket creation
@@ -105,7 +103,6 @@ int main()
 		}
 		else
 			cout << "|...................wsacleanup successful....................|" << endl;
-	}
 	system("PAUSE");
 	return 0;
 }

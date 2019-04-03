@@ -87,28 +87,27 @@ void CheckSQL(char * SQLQuery, int noOfCol)//function to connect to db and run q
 		else {
 			if (noOfCol == 4)
 			{
-				cout << "Sno" << "&nbsp&nbsp&nbsp&nbsp" << "Name" << "&nbsp&nbsp&nbsp&nbsp" 
+				int Ip;
+				char name[20], topic[20];
+				cout <<"Name" << "&nbsp&nbsp&nbsp&nbsp" 
 					<< "IpAddress" << "&nbsp&nbsp&nbsp&nbsp" << "Topic" << "<br>";
 				while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
-					int Sno, Ip;
-					char name[20], topic[20];
-					SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &Sno, sizeof(Sno), NULL);
-					SQLGetData(SQLStatementHandle, 2, SQL_C_DEFAULT, &name, sizeof(name), NULL);
-					SQLGetData(SQLStatementHandle, 3, SQL_C_DEFAULT, &Ip, sizeof(Ip), NULL);
-					SQLGetData(SQLStatementHandle, 4, SQL_C_DEFAULT, &topic, sizeof(topic), NULL);
-					cout << Sno << "&nbsp&nbsp&nbsp&nbsp&nbsp" << name 
+					SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &name, sizeof(name), NULL);
+					SQLGetData(SQLStatementHandle, 2, SQL_C_DEFAULT, &Ip, sizeof(Ip), NULL);
+					SQLGetData(SQLStatementHandle, 3, SQL_C_DEFAULT, &topic, sizeof(topic), NULL);
+					cout << name 
 						<< "&nbsp&nbsp&nbsp&nbsp&nbsp" << Ip << "&nbsp&nbsp&nbsp&nbsp&nbsp" << topic << "<br>";
 				}
 			}
 			else if (noOfCol == 2)
 			{
-				cout << "Sno" << "&nbsp&nbsp&nbsp&nbsp" << "Topic" << "&nbsp&nbsp&nbsp&nbsp" << "<br>";
+				int SNo;
+				char topic[20];
+				cout << "SNo" << "&nbsp&nbsp&nbsp&nbsp" << "Topic" << "&nbsp&nbsp&nbsp&nbsp" << "<br>";
 				while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
-					int Sno;
-					char topic[20];
-					SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &Sno, sizeof(Sno), NULL);
+					SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &SNo, sizeof(SNo), NULL);
 					SQLGetData(SQLStatementHandle, 2, SQL_C_DEFAULT, &topic, sizeof(topic), NULL);
-					cout << Sno << "&nbsp&nbsp&nbsp&nbsp&nbsp" << topic << "&nbsp&nbsp&nbsp&nbsp&nbsp" << "<br>";
+					cout << SNo << "&nbsp&nbsp&nbsp&nbsp&nbsp" << topic << "&nbsp&nbsp&nbsp&nbsp&nbsp" << "<br>";
 				}
 			}
 		}
@@ -133,9 +132,47 @@ int main(int argc,char **argv)
 		std::cout << HTTPHTMLHeader() << endl;
 
 		// Set up the HTML document
-		std::cout << html() << head(title("cgicc example")) << endl;
-		std::cout << body() << endl;
-
+		std::cout << html() << head(title("Manager")) << endl;
+		//std::cout << body() << endl;
+		//NAV BAR
+		cout << "                <meta charset=\"UTF-8\">\n"
+			"                <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
+			"                <link href=\"/vendor/bootstrap/css/bootstrap.min.css\" rel=\"stylesheet\">\n"
+			"          <!-- Custom fonts for this template -->\n"
+			"                <link href=\"/vendor/fontawesome-free/css/all.min.css\" rel=\"stylesheet\">\n"
+			"                <link href=\"/vendor/simple-line-icons/css/simple-line-icons.css\" rel=\"stylesheet\" type=\"text/css\">\n"
+			"                <link href=\"https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic\" rel=\"stylesheet\" type=\"text/css\">\n"
+			"                <link href=\"/css/MainStyle.css\" rel=\"stylesheet\"><link href=\"css/MainStyle.css\" rel=\"stylesheet\">\n"
+			"                <link href=\"/css/menubar.css\" rel=\"stylesheet\">\n"
+			"                <link href=\"/css/details.css\" rel=\"stylesheet\">\n"
+			 "  <!-- Bootstrap core JavaScript -->\n"
+			"  <script src=\"/vendor/jquery/jquery.min.js\"></script>\n"
+			"  <script src=\"/vendor/bootstrap/js/bootstrap.bundle.min.js\"></script>"
+			"  <script src=\"/vendor/bootstrap/js/bootstrap.details.js\"></script>"
+			"                \n"
+			"    </head>\n"
+			"    <body>\n"
+			"         <div class=\"container-fluid\">\n"
+			"    \n"
+			"    <nav class=\"navbar navbar-expand-lg navbar-light bg-light\">\n"
+			"  \n"
+			"  <button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarTogglerDemo02\" aria-controls=\"navbarTogglerDemo02\" aria-expanded=\"false\" aria-label=\"Toggle navigation\">\n"
+			"    <span class=\"navbar-toggler-icon\"></span>\n"
+			"  </button>\n"
+			"\n"
+			"  <div class=\"collapse navbar-collapse\" id=\"navbarTogglerDemo02\">\n"
+			"    <ul class=\"navbar-nav mr-auto mt-2 mt-lg-0\">\n"
+			"      <li class=\"nav-item active\">\n"
+			"        <a class=\"nav-link\" href=\"manager.html\">Home <span class=\"sr-only\">(current)</span></a>\n"
+			"      </li>\n"
+			"      <li class=\"nav-item\">\n"
+			"        <a class=\"nav-link\" href=\"detailsfinal.html\">View Details</a>\n"
+			"      </li>\n"
+			"    </ul>\n"
+			"  </div>\n"
+			"</nav>\n"
+			"</div>  ";
+		//added till here
 		// Print out the submitted element
 		form_iterator name = cgi.getElement("name");
 		if (name != cgi.getElements().end()) {

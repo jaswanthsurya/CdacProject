@@ -1,4 +1,5 @@
 #include <iostream>
+#include<WinSock2.h>
 #include <string>
 #include<cstring>
 #include<string.h>
@@ -11,6 +12,7 @@
 #include <sqltypes.h>
 #include <sql.h>
 
+#pragma warning(disable:4996)
 using namespace std;
 using namespace cgicc;
 
@@ -126,7 +128,7 @@ int main(int argc, char **argv)
 	catch (exception& e) {
 		// handle any errors - omitted for brevity
 	}
-	//convert publisher name in string to char
+	//convert subscriber name in string to char
 	int len = subscriberName.length();
 	int i = 0;
 	char *subscriberName1;
@@ -137,15 +139,21 @@ int main(int argc, char **argv)
 	}
 	subscriberName1[i] = '\0';
 
-	//convert publisherip in string to char
+	//convert subscriberip in string to char
 	i = 0;
-	len = subscriberIp.length();
-	char *subscriberIp1 = new char[len + 1];
-	for (i = 0; i < len; i++)
+	char* subscriberIp1 = new char[subscriberIp.length() + 1];
+	for (i = 0; i < subscriberIp.length(); i++)
 	{
 		subscriberIp1[i] = subscriberIp[i];
 	}
 	subscriberIp1[i] = '\0';
+	unsigned long subscriberIpNum = inet_addr(subscriberIp1);
+	delete(subscriberIp1);
+	//convert number to character array
+	stringstream srs;
+	srs << subscriberIpNum;
+	string temp = srs.str();
+	char *subscriberIp2 = (char *)temp.c_str();
 
 	//convert topic in string to char
 	i = 0;
@@ -161,7 +169,7 @@ int main(int argc, char **argv)
 	char SqlQuery[512] = "insert into SubscriberDetails values('";
 	strcat_s(SqlQuery, subscriberName1);
 	strcat_s(SqlQuery, "',");
-	strcat_s(SqlQuery, subscriberIp1);
+	strcat_s(SqlQuery, subscriberIp2);
 	strcat_s(SqlQuery, ",'");
 	strcat_s(SqlQuery, topic1);
 	strcat_s(SqlQuery, "')");
@@ -169,7 +177,7 @@ int main(int argc, char **argv)
 	CheckSQL(SqlQuery);
 	//deallocate the associated memory
 	delete(subscriberName1);
-	delete(subscriberIp1);
+	delete(subscriberIp2);
 	delete(topic1);
 	return 0;
 }
