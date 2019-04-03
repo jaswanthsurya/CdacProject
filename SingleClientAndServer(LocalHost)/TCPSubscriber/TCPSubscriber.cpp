@@ -44,7 +44,7 @@ int main()
 
 		//filling the server details
 		TCPServerAdd.sin_family = AF_INET;
-		TCPServerAdd.sin_addr.s_addr = inet_addr("192.168.56.2");
+		TCPServerAdd.sin_addr.s_addr = inet_addr("127.0.0.1");
 		TCPServerAdd.sin_port = htons(8100);
 
 		//socket creation
