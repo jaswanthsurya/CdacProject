@@ -91,13 +91,36 @@ void CheckSQL(char * SQLQuery, int noOfCol)//function to connect to db and run q
 				char name[20], topic[20];
 				cout <<"Name" << "&nbsp&nbsp&nbsp&nbsp" 
 					<< "IpAddress" << "&nbsp&nbsp&nbsp&nbsp" << "Topic" << "<br>";
+
+				//adding table head
+				cout << "<table class=\"table\">\n"
+					"  <thead class=\"thead-dark\">\n"
+					"    <tr>\n"
+					"      <th scope=\"col\">NAME</th>\n"
+					"      <th scope=\"col\">IP</th>\n"
+					"      <th scope=\"col\">TOPIC</th>\n"
+					"    </tr>\n"
+					"  </thead>\n";
+				//table head done
+				cout << "  <tbody>\n";
 				while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
 					SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &name, sizeof(name), NULL);
 					SQLGetData(SQLStatementHandle, 2, SQL_C_DEFAULT, &Ip, sizeof(Ip), NULL);
 					SQLGetData(SQLStatementHandle, 3, SQL_C_DEFAULT, &topic, sizeof(topic), NULL);
-					cout << name 
-						<< "&nbsp&nbsp&nbsp&nbsp&nbsp" << Ip << "&nbsp&nbsp&nbsp&nbsp&nbsp" << topic << "<br>";
+					cout << "<tr>\n";
+					cout << "<td>";
+					cout << name;
+					cout << "</td> \n";
+					cout << "<td>";
+					cout << Ip;
+					cout << "</td> \n";
+					cout << "<td>";
+					cout << topic;
+					cout << "</td> \n";
+					cout << "</tr>";
 				}
+				cout << "  </tbody>\n"
+					"</table>\n";
 			}
 			else if (noOfCol == 2)
 			{
