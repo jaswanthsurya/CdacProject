@@ -191,7 +191,7 @@ int main(int argc,char **argv)
 			 "  <!-- Bootstrap core JavaScript -->\n"
 			"  <script src=\"/vendor/jquery/jquery.min.js\"></script>\n"
 			"  <script src=\"/vendor/bootstrap/js/bootstrap.bundle.min.js\"></script>"
-			"  <script src=\"/vendor/bootstrap/js/bootstrap.details.js\"></script>"
+			"  <script src=\"/vendor/bootstrap/js/details.js\"></script>"
 			"                \n"
 			"    </head>\n"
 			"    <body>\n"

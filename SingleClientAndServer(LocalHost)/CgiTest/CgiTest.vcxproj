@@ -74,8 +74,8 @@
     <LibraryPath>F:\cgicc-3.2.16\win\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\Users\suman\Desktop\cgicc-3.2.16;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\suman\Desktop\cgicc-3.2.16\win\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>F:\cgicc-3.2.16;$(IncludePath)</IncludePath>
+    <LibraryPath>F:\cgicc-3.2.16\win\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
