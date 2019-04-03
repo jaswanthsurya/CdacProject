@@ -156,18 +156,33 @@ void checkSQL(char* SQLQuery)
 		else {
 
 			char name[256];
+			//adding table head
+			cout << "<table class=\"table\">\n"
+				"  <thead class=\"thead-dark\">\n"
+				"    <tr>\n"
+				"      <th scope=\"col\">MESSAGES</th>\n"
+				"    </tr>\n"
+				"  </thead>\n";
+			//table head done
+			cout << "  <tbody>\n";
 
 			while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
 
 				SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &name, sizeof(name), NULL);
 
-				cout << name << endl<<"<br>";
-				
-				// Retrieves data for a single column in the result set
-
-
-
+				cout << "<tr>\n";
+				cout << "<td>";
+				cout << name;
+				cout << "</td> \n";
+				cout << "</tr>";
 			}
+			cout << "  </tbody>\n"
+				"</table>\n";
+				
+
+
+
+			
 
 		}
 
@@ -205,7 +220,7 @@ int main(int argc, char **argv)
 			"</head>\n"
 			"</style>\n"
 			"<form method=\"post\" action=\"subscriber_with_webpage1.cgi\">\n"
-			"<input id=\"two\" type=\"submit\" class=\"submit\"  value=\"topics are\"/>\n"
+
 			"</form>\n"
 			"</body>\n"
 			"</html>";
