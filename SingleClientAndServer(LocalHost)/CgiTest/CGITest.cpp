@@ -240,6 +240,14 @@ int main(int argc,char **argv)
 				flag = 1;
 			}
 		}
+		if (flag == 0)
+		{
+			stringstream strs;
+			strs << SqlQuery;
+			SqlQuery = strs.str();
+			char * SqlQuery1 = (char *)SqlQuery.c_str();
+			CheckSQL(SqlQuery1, noOfCol);
+		}
 		//added developers section
 
 		//DEVELOPERS SECTION
@@ -279,12 +287,5 @@ int main(int argc,char **argv)
 	catch (exception& e) {
 		// handle any errors - omitted for brevity
 	}
-	if (flag == 0)
-	{
-		stringstream strs;
-		strs << SqlQuery;
-		SqlQuery = strs.str();
-		char * SqlQuery1 = (char *)SqlQuery.c_str();
-		CheckSQL(SqlQuery1,noOfCol);
-	}
+	
 }
