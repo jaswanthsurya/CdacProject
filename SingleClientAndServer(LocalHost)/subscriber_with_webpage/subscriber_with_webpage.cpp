@@ -83,15 +83,64 @@ int main(int argc, char **argv)
 				"  <div class=\"collapse navbar-collapse\" id=\"navbarTogglerDemo02\">\n"
 				"    <ul class=\"navbar-nav mr-auto mt-2 mt-lg-0\">\n"
 				"      <li class=\"nav-item active\">\n"
-				"        <a class=\"nav-link\" href=\"../manager.html\">Home <span class=\"sr-only\">(current)</span></a>\n"
-				"      </li>\n"
-				"      <li class=\"nav-item\">\n"
-				"        <a class=\"nav-link\" href=\"../detailsfinal.html\">View Details</a>\n"
+				"        <a class=\"nav-link\" href=\"../subscriber.html\">Home <span class=\"sr-only\">(current)</span></a>\n"
 				"      </li>\n"
 				"    </ul>\n"
 				"  </div>\n"
 				"</nav>\n"
 				"</div>  ";
+
+
+			//Subscriber home page here
+
+			cout << "<div class=\"container mt-4\">\n"
+				"            <!-- Grid row -->\n"
+				"            <div class=\"row\">\n"
+				"                <!-- Grid column -->\n"
+				"                <div class=\"col-md-6 mb-4\">\n"
+				"                    <div class=\"card\">\n"
+				"                        <div class=\"card-body\">\n"
+				"                            <h3 class=\"text-center default-text py-3\"><i class=\"fa fa-refresh\"></i> Update</h3>\n"
+				"                            <!--Body-->\n"
+				"                            <form method=\"post\" action=\"subscriber_with_webpage1.cgi\">\n"
+				"                            <div class=\"text-center\">\n"
+				"                                <input type=\"submit\" class=\"btn btn-default waves-effect waves-light\" value=\"Refresh\"></input>\n"
+				"                            </div>\n"
+				"                        </form>\n"
+				"                        </div>\n"
+				"                    </div>\n"
+				"                </div>\n"
+				"                <!-- Grid column -->\n"
+				"                <!-- Grid column -->\n"
+				"                <div class=\"col-md-6 mb-4\">\n"
+				"                    <div class=\"card indigo form-white\">\n"
+				"                        <div class=\"card-body\">\n"
+				"                            <h3 class=\"text-center white-text py-3\"><i class=\"fa fa-history\"></i> Posts Till Now</h3>\n"
+				"                            <!--Body-->\n"
+				"                            <form method=\"post\" action=\"subscriber_with_DetailsOfPreviousMessages.cgi\">\n"
+				"                            <div class=\"text-center\">\n"
+				"                                <input type=\"submit\" class=\"btn btn-default waves-effect waves-light\" value=\"View Posts\"></input>\n"
+				"                            </div>\n"
+				"                        </div>\n"
+				"                    </div>\n"
+				"                </div>\n"
+				"                <!-- Grid column -->\n"
+				"            </div>\n"
+				"            <!-- Grid row -->\n"
+				"            <!-- Grid row -->\n"
+				"        </div>\n"
+				"";
+
+
+
+
+
+
+
+
+
+
+			//ending home page here
 			
 			// Close the HTML document
 			cout << body() << html();
