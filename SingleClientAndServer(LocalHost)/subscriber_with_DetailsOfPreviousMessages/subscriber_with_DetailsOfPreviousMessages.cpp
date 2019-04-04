@@ -158,33 +158,65 @@ void checkSQL(char* SQLQuery)
 			char name[256];
 			char time[256];
 			//adding table head
-			cout << "<table class=\"table\">\n"
-				"  <thead class=\"thead-dark\">\n"
-				"    <tr>\n"
-				"      <th scope=\"col\">MESSAGES</th>\n"
-				"      <th scope=\"col\">TIME</th>\n"
-				"    </tr>\n"
-				"  </thead>\n";
-			//table head done
-			cout << "  <tbody>\n";
+			//cout << "<table class=\"table\">\n"
+			//	"  <thead class=\"thead-dark\">\n"
+			//	"    <tr>\n"
+			//	"      <th scope=\"col\">MESSAGES</th>\n"
+			//	"      <th scope=\"col\">TIME</th>\n"
+			//	"    </tr>\n"
+			//	"  </thead>\n";
+			////table head done
+			//cout << "  <tbody>\n";
+
+
+
+			/*
+			"<div class=\"card text-center border-secondary\" style=\"background-color: rgba(255, 99, 71, 0.5)\"> \n"
+			"  <div class=\"card-header\">\n"
+			"   Here's your Post:\n"
+			"  </div>\n"
+			"  <div class=\"card-body\">\n"
+			"    <h5 class=\"card-title\">Special title treatment</h5>\n"
+			"  </div>\n"
+			"  <div class=\"card-footer text-muted\">\n"
+			"    2 days ago\n"
+			"  </div>\n"
+			"</div>"
+			*/
 
 			while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
 
 				SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &name, sizeof(name), NULL);
 				SQLGetData(SQLStatementHandle, 2, SQL_C_DEFAULT, &time, sizeof(time), NULL);
 
-				cout << "<tr>\n";
-				cout << "<td>";
+				/*cout << "<tr>\n";
+				cout << "<td>";*/
+				cout << "<div class=\"card text-center border-secondary\" style=\"background-color: rgba(255, 99, 71, 0.5)\"> \n"
+					"  <div class=\"card-header\">\n"
+					"   Here's your Post:\n"
+					"  </div>\n";
+				cout << "  <div class=\"card-body\">\n";
+				cout << "    <h5 class=\"card-title\">";
 				cout << name;
-				cout << "</td> \n";
-				cout << "<td>";
+				cout<<"< / h5>\n"
+					"  </div>\n";
+				cout << "  <div class=\"card-footer text-muted\">\n";
 				cout << time;
-				cout << "</td> \n";
-				cout << "</tr>";
-			}
-			cout << "  </tbody>\n"
-				"</table>\n";
+					cout<<"  </div>\n"
+					"</div>";
+
 				
+				/*cout << "</td> \n";
+				cout << "<td>";*/
+				/*cout << time;*/
+				/*cout << "</td> \n";
+				cout << "</tr>";*/
+			}
+
+
+			/*cout << "  </tbody>\n"
+				"</table>\n";
+				*/
 
 
 
@@ -217,22 +249,47 @@ int main(int argc, char **argv)
 
 		// Set up the HTML document
 		cout << html() << head(title("cgicc example")) << endl;
-		cout << body() << endl;
-		cout << "<head>\n"
-			"<style>\n"
-			"body{\n"
-			"  background-color:lightblue;\n"
-			"}\n"
-			"</head>\n"
-			"</style>\n"
-			"<form method=\"post\" action=\"subscriber_with_webpage1.cgi\">\n"
+		// adding bootstrap links and then nav bar starts 
+		cout << "                <meta charset=\"UTF-8\">\n"
+			"                <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
+			"                <link href=\"/vendor/bootstrap/css/bootstrap.min.css\" rel=\"stylesheet\">\n"
+			"          <!-- Custom fonts for this template -->\n"
+			"                <link href=\"/vendor/fontawesome-free/css/all.min.css\" rel=\"stylesheet\">\n"
+			"                <link href=\"/vendor/simple-line-icons/css/simple-line-icons.css\" rel=\"stylesheet\" type=\"text/css\">\n"
+			"                <link href=\"https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic\" rel=\"stylesheet\" type=\"text/css\">\n"
+			"                <link href=\"/css/MainStyle.css\" rel=\"stylesheet\"><link href=\"css/MainStyle.css\" rel=\"stylesheet\">\n"
+			"                <link href=\"/css/menubar.css\" rel=\"stylesheet\">\n"
+			"                <link href=\"/css/details.css\" rel=\"stylesheet\">\n"
+			"                <link href=\"/css/subscriber.css\" rel=\"stylesheet\">\n"
+			"  <!-- Bootstrap core JavaScript -->\n"
+			"  <script src=\"/vendor/jquery/jquery.min.js\"></script>\n"
+			"  <script src=\"/vendor/bootstrap/js/bootstrap.bundle.min.js\"></script>"
+			"  <script src=\"/vendor/bootstrap/js/details.js\"></script>"
+			"                \n"
+			"    </head>\n"
+			"    <body>\n"
+			"         <div class=\"container-fluid\">\n"
+			"    \n"
+			"    <nav class=\"navbar navbar-expand-lg navbar-light bg-light\">\n"
+			"  \n"
+			"  <button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarTogglerDemo02\" aria-controls=\"navbarTogglerDemo02\" aria-expanded=\"false\" aria-label=\"Toggle navigation\">\n"
+			"    <span class=\"navbar-toggler-icon\"></span>\n"
+			"  </button>\n"
+			"\n"
+			"  <div class=\"collapse navbar-collapse\" id=\"navbarTogglerDemo02\">\n"
+			"    <ul class=\"navbar-nav mr-auto mt-2 mt-lg-0\">\n"
+			"      <li class=\"nav-item active\">\n"
+			"        <a class=\"nav-link\" href=\"../subscriber.html\">Home <span class=\"sr-only\">(current)</span></a>\n"
+			"      </li>\n"
+			"    </ul>\n"
+			"  </div>\n"
+			"</nav>\n"
+			"</div>  ";
+		//nav bar ends here
 
-			"</form>\n"
-			"</body>\n"
-			"</html>";
+		
 
-		// Close the HTML document
-		cout << body() << html();
+		
 		char SQLQuery2[] = "select * from subsriber order by date_time desc";
 
 			checkSQL(SQLQuery2);
@@ -240,5 +297,6 @@ int main(int argc, char **argv)
 	catch (exception& e) {
 		// handle any errors - omitted for brevity
 	}
-	
+	// Close the HTML document
+	cout << body() << html();
 }
