@@ -27,9 +27,9 @@ int main(int argc, char **argv)
 			cout << HTTPHTMLHeader() << endl;
 
 			// Set up the HTML document
-			cout << html() << head(title("cgicc example")) << endl;
+			cout << html() << head(title("POSTS")) << endl;
 			cout << body() << endl;
-			cout << "<head>\n"
+			/*cout << "<head>\n"
 				"<style>\n"
 				"body{\n"
 				"  background-color:lightblue;\n"
@@ -52,7 +52,46 @@ int main(int argc, char **argv)
 				"<input id=\"two\" type=\"submit\" class=\"submit\"  value=\"Received successfully\"/>\n"
 				"</form>\n"
 				"</body>\n"
-				"</html>";
+				"</html>";*/
+
+			cout << "                <meta charset=\"UTF-8\">\n"
+				"                <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
+				"                <link href=\"/vendor/bootstrap/css/bootstrap.min.css\" rel=\"stylesheet\">\n"
+				"          <!-- Custom fonts for this template -->\n"
+				"                <link href=\"/vendor/fontawesome-free/css/all.min.css\" rel=\"stylesheet\">\n"
+				"                <link href=\"/vendor/simple-line-icons/css/simple-line-icons.css\" rel=\"stylesheet\" type=\"text/css\">\n"
+				"                <link href=\"https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic\" rel=\"stylesheet\" type=\"text/css\">\n"
+				"                <link href=\"/css/MainStyle.css\" rel=\"stylesheet\"><link href=\"css/MainStyle.css\" rel=\"stylesheet\">\n"
+				"                <link href=\"/css/menubar.css\" rel=\"stylesheet\">\n"
+				"                <link href=\"/css/details.css\" rel=\"stylesheet\">\n"
+				"                <link href=\"/css/subscriber.css\" rel=\"stylesheet\">\n"
+				"  <!-- Bootstrap core JavaScript -->\n"
+				"  <script src=\"/vendor/jquery/jquery.min.js\"></script>\n"
+				"  <script src=\"/vendor/bootstrap/js/bootstrap.bundle.min.js\"></script>"
+				"  <script src=\"/vendor/bootstrap/js/details.js\"></script>"
+				"                \n"
+				"    </head>\n"
+				"    <body>\n"
+				"         <div class=\"container-fluid\">\n"
+				"    \n"
+				"    <nav class=\"navbar navbar-expand-lg navbar-light bg-light\">\n"
+				"  \n"
+				"  <button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarTogglerDemo02\" aria-controls=\"navbarTogglerDemo02\" aria-expanded=\"false\" aria-label=\"Toggle navigation\">\n"
+				"    <span class=\"navbar-toggler-icon\"></span>\n"
+				"  </button>\n"
+				"\n"
+				"  <div class=\"collapse navbar-collapse\" id=\"navbarTogglerDemo02\">\n"
+				"    <ul class=\"navbar-nav mr-auto mt-2 mt-lg-0\">\n"
+				"      <li class=\"nav-item active\">\n"
+				"        <a class=\"nav-link\" href=\"../manager.html\">Home <span class=\"sr-only\">(current)</span></a>\n"
+				"      </li>\n"
+				"      <li class=\"nav-item\">\n"
+				"        <a class=\"nav-link\" href=\"../detailsfinal.html\">View Details</a>\n"
+				"      </li>\n"
+				"    </ul>\n"
+				"  </div>\n"
+				"</nav>\n"
+				"</div>  ";
 			
 			// Close the HTML document
 			cout << body() << html();
