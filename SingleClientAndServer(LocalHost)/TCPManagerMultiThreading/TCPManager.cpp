@@ -11,12 +11,16 @@
 #include<algorithm>
 
 #define MaxThreads 10
+#define getip 1
+#define getTopic 2
 
 #pragma warning(disable:4996) 
 using namespace std;
 
 vector<int> vect;
 vector<int> repVect;
+char *PubTopic;
+char *PubName;
 SOCKET sAcceptSocket1;
 int CurrentIpAddressOfClient;
 int CurrentIpAddressOfClientSubscriber;
@@ -92,7 +96,7 @@ void showSQLError(unsigned int handleType, const SQLHANDLE& handle)
 		cout << "|.................SQL driver message......................|" << message << "\nSQL state: " << SQLState << "." << endl;
 }
 
-void CheckSQL(char * SQLQuery)//function to connect to db and run query accordingly
+void CheckSQL(char * SQLQuery,int type)//function to connect to db and run query accordingly
 {
 	SQLHANDLE SQLEnvHandle = NULL;
 	SQLHANDLE SQLConnectionHandle = NULL;
@@ -155,9 +159,33 @@ void CheckSQL(char * SQLQuery)//function to connect to db and run query accordin
 		}
 		else {
 			int num;
+			char topic[20];
+			char Name[30];
 			while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
-				SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &num, sizeof(num), NULL);
-				vect.push_back(num);
+				if (type == 1)
+				{
+					SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &num, sizeof(num), NULL);
+					vect.push_back(num);
+				}
+				if (type == 2)
+				{
+					SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &Name, sizeof(Name), NULL);
+					SQLGetData(SQLStatementHandle, 2, SQL_C_DEFAULT, &topic, sizeof(topic), NULL);
+					PubTopic = new char[strlen(topic) + 1];
+					PubName = new char[strlen(Name) + 1];
+					int i;
+					for (i = 0; i < strlen(topic); i++)
+					{
+						PubTopic[i] = topic[i];
+					}
+					PubTopic[i] = '\0';
+					i = 0;
+					for (i = 0; i < strlen(Name); i++)
+					{
+						PubName[i] = Name[i];
+					}
+					PubName[i] = '\0';
+				}
 			}
 		}
 	} while (FALSE);
@@ -228,7 +256,7 @@ void GetPublished()
 	//function to get the ip address of publisher
 	char SQLQuery[] = "SELECT  PublisherIP FROM PublisherDetails";
 	cout << "|............getting ip addresses of publishers...........|" << endl;
-	CheckSQL(SQLQuery);
+	CheckSQL(SQLQuery,getip);
 	vect.push_back(0);
 	while (1)
 	{
@@ -239,6 +267,13 @@ void GetPublished()
 		CurrentIpAddressOfClient = TCPClientAdd.sin_addr.s_addr;
 		if (findVector(CurrentIpAddressOfClient))
 		{
+			char SQLQuery1[100]= "select PublisherName,topic from PublisherDetails where PublisherIp=";
+			stringstream strs;
+			strs << CurrentIpAddressOfClient;
+			string temp_str = strs.str();
+			char * CurrentIpAddressOfClientstr = (char *)temp_str.c_str();
+			strcat(SQLQuery1, CurrentIpAddressOfClientstr);
+			CheckSQL(SQLQuery1, getTopic);
 			cout << "|..................accept successfull.....................|" << endl << endl;
 			cout << "|............The ip address connected is " << inet_ntoa(TCPClientAdd.sin_addr) << ".....|" << endl;
 			//create a thread to handle receiving multiple publishers
@@ -285,6 +320,7 @@ void SendSubscribed(char* SenderBuffer, int iSenderBuffer)
 
 	int iBind;
 	int iListen;
+	int iTemp;
 
 	SOCKET sAcceptSocket;
 
@@ -331,7 +367,7 @@ void SendSubscribed(char* SenderBuffer, int iSenderBuffer)
 	strcat(SQLQuery1, c);
 
 	clearVect();
-	CheckSQL(SQLQuery1);
+	CheckSQL(SQLQuery1,1);
 	vect.push_back(0);
 	int noOfEle;
 	noOfEle = FindNumberOfElements();
@@ -353,7 +389,14 @@ void SendSubscribed(char* SenderBuffer, int iSenderBuffer)
 				//send the buffer content to the client
 				int iSend;
 				//sending data
-				iSend = send(sAcceptSocket, SenderBuffer, iSenderBuffer, 0);
+				char temp[512] = "Here is an update about ";
+				strcat(temp, PubTopic);
+				strcat(temp, " by ");
+				strcat(temp, PubName);
+				strcat(temp, ":<br>");
+				strcat(temp, SenderBuffer);
+				iTemp = strlen(temp)+1;
+				iSend = send(sAcceptSocket, temp, iTemp, 0);
 				if (iSend == SOCKET_ERROR)
 				{
 					cerr << "|.............sending failed due to error.................|" << WSAGetLastError() << endl;
@@ -367,10 +410,10 @@ void SendSubscribed(char* SenderBuffer, int iSenderBuffer)
 				if (noOfEle == 1)
 					break;
 			}
-			
 		}
 	}
-
+	delete(PubTopic);
+	delete(PubName);
 
 	//closing socket
 	iCloseSocket = closesocket(TCPServerSocket);
