@@ -156,11 +156,13 @@ void checkSQL(char* SQLQuery)
 		else {
 
 			char name[256];
+			char time[256];
 			//adding table head
 			cout << "<table class=\"table\">\n"
 				"  <thead class=\"thead-dark\">\n"
 				"    <tr>\n"
 				"      <th scope=\"col\">MESSAGES</th>\n"
+				"      <th scope=\"col\">TIME</th>\n"
 				"    </tr>\n"
 				"  </thead>\n";
 			//table head done
@@ -169,10 +171,14 @@ void checkSQL(char* SQLQuery)
 			while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
 
 				SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &name, sizeof(name), NULL);
+				SQLGetData(SQLStatementHandle, 2, SQL_C_DEFAULT, &time, sizeof(time), NULL);
 
 				cout << "<tr>\n";
 				cout << "<td>";
 				cout << name;
+				cout << "</td> \n";
+				cout << "<td>";
+				cout << time;
 				cout << "</td> \n";
 				cout << "</tr>";
 			}
@@ -227,7 +233,7 @@ int main(int argc, char **argv)
 
 		// Close the HTML document
 		cout << body() << html();
-		char SQLQuery2[] = "select * from subsriber";
+		char SQLQuery2[] = "select * from subsriber order by date_time desc";
 
 			checkSQL(SQLQuery2);
 	}
