@@ -240,7 +240,7 @@ void GetPublished()
 		if (findVector(CurrentIpAddressOfClient))
 		{
 			cout << "|..................accept successfull.....................|" << endl << endl;
-			cout << "|............The ip address connected is " << CurrentIpAddressOfClient << ".......|" << endl;
+			cout << "|............The ip address connected is " << inet_ntoa(TCPClientAdd.sin_addr) << ".....|" << endl;
 			//create a thread to handle receiving multiple publishers
 			CreateThreadHandle[ThreadCount] = CreateThread(NULL,//security attributes thread is not inherited if null
 				0,//stack size for thread if 0 it uses size of executable
@@ -348,7 +348,7 @@ void SendSubscribed(char* SenderBuffer, int iSenderBuffer)
 			if (findRep(CurrentIpAddressOfClientSubscriber) == 1)
 			{
 				cout << "|.................accept successfull......................|" << endl << endl;
-				cout << "|............The ip address connected is " << CurrentIpAddressOfClientSubscriber << ".......|" << endl;
+				cout << "|............The ip address connected is " << inet_ntoa(TCPClientAdd.sin_addr) << ".....|" << endl;
 				noOfEle--;
 				//send the buffer content to the client
 				int iSend;
