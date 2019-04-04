@@ -15,9 +15,6 @@ using namespace cgicc;
 
 int main(int argc, char **argv)
 {
-	string SqlQuery;
-	int noOfCol;
-	int flag = 0;
 	try {
 		Cgicc cgi;
 
@@ -67,7 +64,86 @@ int main(int argc, char **argv)
 			"</div>  ";
 		//added till here
 		// Print out the submitted element
-		form_iterator name = cgi.getElement("name");
+
+		//added form element
+		cout << "<div class=\"container register\">\n"
+			"            <div class=\"row\">\n"
+			"                <div class=\"col-md-12\">\n"
+			"                    <ul class=\"nav nav-tabs nav-justified\" id=\"myTab\" role=\"tablist\">\n"
+			"                        <li class=\"nav-item\">\n"
+			"                            <a class=\"nav-link active\" id=\"home-tab\" data-toggle=\"tab\" href=\"#home\" role=\"tab\" aria-controls=\"home\" aria-selected=\"true\">Add Publisher</a>\n"
+			"                        </li>\n"
+			"                        <li class=\"nav-item\">\n"
+			"                            <a class=\"nav-link\" id=\"profile-tab\" data-toggle=\"tab\" href=\"#profile\" role=\"tab\" aria-controls=\"profile\" aria-selected=\"false\">Add Subscriber</a>\n"
+			"                        </li>\n"
+			"                        <li class=\"nav-item\">\n"
+			"                            <a class=\"nav-link\" id=\"profile-tab\" data-toggle=\"tab\" href=\"#server\" role=\"tab\" aria-controls=\"profile\" aria-selected=\"false\">Run Server</a>\n"
+			"                        </li>\n"
+			"                    </ul>\n"
+			"                    <div class=\"tab-content\" id=\"myTabContent\">\n"
+			"                        <div class=\"tab-pane fade show active text-align form-new\" id=\"home\" role=\"tabpanel\" aria-labelledby=\"home-tab\">\n"
+			"                            <h3 class=\"register-heading\">Publisher Form</h3>\n"
+			"                            <div class=\"row register-form\">\n"
+			"                                <div class=\"col-md-12\">\n"
+			"                                    <form method=\"post\" action=\"insert_publisher.cgi\">\n"
+			"                                        <div class=\"form-group\">\n"
+			"                                            <input type=\"text\" name=\"publisher_name\" class=\"form-control\" placeholder=\"Publisher name *\" value=\"\" required=\"\"/>\n"
+			"                                        </div>\n"
+			"                                        <div class=\"form-group\">\n"
+			"                                            <input type=\"text\" name=\"publisher_ip\" class=\"form-control\" placeholder=\"Publisher ip *\" value=\"\" required=\"\"/>\n"
+			"                                        </div>\n"
+			"                                        <div class=\"form-group\">\n"
+			"                                            <input type=\"text\" name=\"topic\" class=\"form-control\" placeholder=\"TOPIC *\" value=\"\" required=\"\"/>\n"
+			"                                        </div>\n"
+			"                                        <div class=\"form-group\">\n"
+			"                                            <input type=\"submit\" name=\"publisher_button\" class=\"btnContactSubmit\" value=\"submit\" />\n"
+			"                                        </div>\n"
+			"                                    </form>\n"
+			"                                </div>\n"
+			"                            </div>\n"
+			"                        </div>\n"
+			"                        <div class=\"tab-pane fade show text-align form-new\" id=\"profile\" role=\"tabpanel\" aria-labelledby=\"profile-tab\">\n"
+			"                            <h3  class=\"register-heading\">Subscriber Form</h3>\n"
+			"                            <div class=\"row register-form\">\n"
+			"                                <div class=\"col-md-12\">\n"
+			"                                    <form method=\"post\" action=\"insert_subscriber.cgi\">\n"
+			"                                        <div class=\"form-group\">\n"
+			"                                            <input type=\"text\" name=\"subscriber_name\" class=\"form-control\" placeholder=\"Subscriber name *\" value=\"\" required=\"\" />\n"
+			"                                        </div>\n"
+			"                                        <div class=\"form-group\">\n"
+			"                                            <input type=\"text\" name=\"subscriber_ip\" class=\"form-control\" placeholder=\"Subscriber ip*\" value=\"\" required=\"\"/>\n"
+			"                                        </div>\n"
+			"                                        <div class=\"form-group\">\n"
+			"                                            <input type=\"text\" name=\"topic\" class=\"form-control\" placeholder=\"TOPIC *\" value=\"\" required=\"\"/>\n"
+			"                                        </div>\n"
+			"                                        <div class=\"form-group\">\n"
+			"                                            <input type=\"submit\" name=\"subscriber_button\" class=\"btnContactSubmit\" value=\"submit\" />\n"
+			"                                        </div>\n"
+			"                                    </form>\n"
+			"                                </div>\n"
+			"                            </div>\n"
+			"                        </div>\n"
+			"\n"
+			"\n"
+			"                        <div class=\"tab-pane fade show text-align form-new\" id=\"server\" role=\"tabpanel\" aria-labelledby=\"profile-tab\">\n"
+			"                            <h3  class=\"register-heading\">Server</h3>\n"
+			"                            <div class=\"row register-form\">\n"
+			"                                <div class=\"col-md-12\">\n"
+			"                                    <form method=\"post\" action=\"server.cgi\">\n"
+			"                                        <div class=\"form-group\">\n"
+			"                                            <input type=\"submit\" name=\"subscriber_button\" class=\"btnContactSubmit\" value=\"Click to run server       \" />\n"
+			"                                        </div>\n"
+			"                                    </form>\n"
+			"                                </div>\n"
+			"                            </div>\n"
+			"                        </div>\n"
+			"\n"
+			"\n"
+			"                    </div>\n"
+			"                </div>\n"
+			"            </div>\n"
+			"        </div>\n"
+			"";
 		//added developers section
 
 		//DEVELOPERS SECTION
@@ -113,7 +189,7 @@ int main(int argc, char **argv)
 	ZeroMemory(&ProcessInfo, sizeof(ProcessInfo));
 	StartUpInfo.cb = sizeof(StartUpInfo);
 	BOOL Status = 0;
-	Status = CreateProcess("C:\\Users\\jassusai\\source\\repos\\CdacProject\\SingleClientAndServer(LocalHost)\\Release\\TCPManagerMultiThreading.exe",//null if the application name is not given using variable but using command line arguments
+	Status = CreateProcess("C:\\Users\\jassusai\\source\\repos\\CdacProject\\SingleClientAndServer(LocalHost)\\x64\\Debug\\TCPManagerMultiThreading.exe",//null if the application name is not given using variable but using command line arguments
 		NULL,//application name given as command line argument 
 		NULL,//process not inheritable if null
 		NULL,//thread not inheritable if null
