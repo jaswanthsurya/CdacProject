@@ -269,14 +269,15 @@ int main()
 
 		{
 
-			char SQLQuery1[2000] = "INSERT INTO subsriber VALUES('";
+			char SQLQuery1[2000] = "INSERT INTO subsriber(message,date_time) VALUES('";
 
 			strcat(SQLQuery1, RecvBuffer);
 
-			char c[] = "')";
-
+			char c[] = "',";
 			strcat(SQLQuery1, c);
-
+			strcat(SQLQuery1,"CURRENT_TIMESTAMP");
+			strcat(SQLQuery1, ")");
+		
 			checkSQL(SQLQuery1);
 
 			//char SQLQuery2[] = "select * from subsriber";
