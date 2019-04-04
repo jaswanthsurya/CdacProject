@@ -131,17 +131,48 @@ int main(int argc, char **argv)
 				"        </div>\n"
 				"";
 
-
-
-
-
-
-
-
-
-
 			//ending home page here
 			
+
+
+			//Developers section
+
+
+
+
+
+
+
+
+
+			//ending developers section
+			cout << "<section class=\"testimonials text-center bg-light\">\n"
+				"    <div class=\"container\">\n"
+				"      <h2 class=\"mb-5\">Developers</h2>\n"
+				"      <div class=\"row\">\n"
+				"        <div class=\"col-lg-4\">\n"
+				"          <div class=\"testimonial-item mx-auto mb-5 mb-lg-0\">\n"
+				"            <img class=\"img-fluid rounded-circle mb-3\" src=\"/img/pp.jpg\" alt=\"\">\n"
+				"            <h5>Subodh Thota</h5>\n"
+				"          </div>\n"
+				"        </div>\n"
+				"        <div class=\"col-lg-4\">\n"
+				"          <div class=\"testimonial-item mx-auto mb-5 mb-lg-0\">\n"
+				"            <img class=\"img-fluid rounded-circle mb-3\" src=\"/img/surya.jpg\" alt=\"\">\n"
+				"            <h5>Jaswanth Surya</h5>\n"
+				"          </div>\n"
+				"        </div>\n"
+				"        <div class=\"col-lg-4\">\n"
+				"          <div class=\"testimonial-item mx-auto mb-5 mb-lg-0\">\n"
+				"            <img class=\"img-fluid rounded-circle mb-3\" src=\"/img/haritha.jpg\" alt=\"\">\n"
+				"            <h5>Haritha</h5>\n"
+				"          </div>\n"
+				"        </div>\n"
+				"      </div>\n"
+				"    </div>\n"
+				"  </section>\n"
+				"\n";
+
 			// Close the HTML document
 			cout << body() << html();
 		}
