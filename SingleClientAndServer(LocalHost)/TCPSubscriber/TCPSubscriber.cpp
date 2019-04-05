@@ -77,6 +77,7 @@ int main()
 			cout << "|..............receiving data succedded received.............|" << RecvBuffer << endl;
 		}
 		ofstream file;
+		file.open("data.txt");
 		file << RecvBuffer << endl;
 		file.close();
 		//closing socket
