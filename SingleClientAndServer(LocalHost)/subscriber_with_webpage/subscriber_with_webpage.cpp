@@ -137,15 +137,6 @@ int main(int argc, char **argv)
 
 			//Developers section
 
-
-
-
-
-
-
-
-
-			//ending developers section
 			cout << "<section class=\"testimonials text-center bg-light\">\n"
 				"    <div class=\"container\">\n"
 				"      <h2 class=\"mb-5\">Developers</h2>\n"
@@ -172,7 +163,7 @@ int main(int argc, char **argv)
 				"    </div>\n"
 				"  </section>\n"
 				"\n";
-
+			//ending dev
 			// Close the HTML document
 			cout << body() << html();
 		}
